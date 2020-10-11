@@ -17,7 +17,7 @@ tail -n +2 ../Data/E.coli.fasta
 # therefore '+2' means show all lines starting from the second one, thereby cutting out the first line
 
 #3
-tail -n +2 ../Data/E.coli.fasta | wc -c
+tail -n +2 ../Data/E.coli.fasta | tr -d '\n' | wc -c
 
 # EXPLANATION
 # first part same as question 2 to ensure the first line not counted (as it's not part of the sequence)
@@ -33,21 +33,20 @@ sed '1d' ../Data/E.coli.fasta | tr -d '\n' | grep -o -i 'ATGC' | wc -l
 # wc -l = count the lines outputted by grep (each match is on a new line)
 
 #5
-sed '1d' ../Data/E.coli.fasta | tr -d '\n' > TruncatedE.coli.txt && 
-echo -n 'scale=3; (' > Sum.txt && 
-grep -o -i 'A' TruncatedE.coli.txt | wc -l >> Sum.txt && 
-echo -n '+' >> Sum.txt && 
-grep -o -i 'T' TruncatedE.coli.txt | wc -l >> Sum.txt && 
-echo -n ')/(' >> Sum.txt && 
-grep -o -i 'G' TruncatedE.coli.txt | wc -l >> Sum.txt &&
-echo -n '+' >> Sum.txt && 
-grep -o -i 'C' TruncatedE.coli.txt | wc -l >> Sum.txt && 
-echo ')' >> Sum.txt &&
-tr -d '\n' < Sum.txt > FinalSum.txt && echo "" >> FinalSum.txt &&
-cat FinalSum.txt | bc
+
+echo "scale=3;" $(grep -o "A\|T" ../Data/E.coli.fasta | wc -l) / $(grep -o "G\|C" ../Data/E.coli.fasta | wc -l) | bc
 
 # EXPLANATION
-# 1) Get rid of first line and newline characters so grep works correctly - save the truncated E.coli fasta in a new file
+# command substitution: the shell will execute what is within $() then pass that to the command (aka echo in this case)
+
+
+
+
+
+
+
+
+1) Get rid of first line and newline characters so grep works correctly - save the truncated E.coli fasta in a new file
 # 2) The echos and greps are there (and wc after grep - see Q4 for explanation) so that the file 'Sum.txt' will eventually read out "(numA + num T)/(numG + numC)". Lots of redirecting to Sum.txt to do this.
 # Note that echo -n used: this stops the trailing \n when adding to Sum.txt, as bc (the calculator) won't be able to read the file if there's newline characters.
 # Also note that as each grep is a new command (&& not | used) the filename needs to be put everytime.

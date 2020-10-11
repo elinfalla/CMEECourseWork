@@ -10,6 +10,6 @@
 
 # Date: Oct 2020
 
-echo -e "\nThis is a shell script! \n"
+echo -e "\nThis is a shell script! \n" #-e allows the interpretation of backslash escapes
 
-#exit
+exit 0

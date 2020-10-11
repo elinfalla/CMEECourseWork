@@ -6,12 +6,24 @@
 
 # Desc: counts lines of a file
 
-# Arguments: 1 -> a file
+# Arguments: 1 -> a text file
 
 # Date: Oct 2020
 
+#Error message if too few files are given/arguments are not files
+if [[ ! -f $1 ]]; #-f = file, $'n' = positional parameters, $0 = actual script, $1, $2 etc = other inputs
+    then echo "Please input a file as an argument."; 
+    exit 1 #non-zero exit means an error occurred
+fi
 
-NumLines=`wc -l < $1`
+#Error message if too many files given
+if [[ -f $2 ]]
+    then echo "Too many files given. Script requires 1 file as argument."
+    exit 2
+fi
+
+NumLines=`wc -l < $1` #< means do wc-l on $1
 echo "The file $1 has $NumLines lines"
-exit
+
+exit 0
 
