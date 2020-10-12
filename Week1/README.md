@@ -6,8 +6,10 @@ This week we covered:
 - Git
 - LaTeX
 
-**Language(s):** bash version 3.2.57(1)-release
+**Language(s):** Bash version 3.2.57(1)
+
 **Dependencies:** imagemagick
+
 **Installation:** brew install imagemagick (for MacOS)
 
 ### Project structure
