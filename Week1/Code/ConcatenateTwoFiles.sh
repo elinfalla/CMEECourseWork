@@ -23,7 +23,6 @@ if [[ -f $4 ]]
     exit 2
 fi
 
-
 cat $1 > $3
 cat $2 >> $3
 echo "Merged file is:"

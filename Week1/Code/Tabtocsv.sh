@@ -17,7 +17,7 @@ fi
 
 if [[ -f $2 ]];
     then echo "Please give only one tab delimted file as an argument."; 
-    exit 1
+    exit 2
 fi
 
 echo "Creating a comma delimited version of $1 ..."

@@ -33,26 +33,11 @@ sed '1d' ../Data/E.coli.fasta | tr -d '\n' | grep -o -i 'ATGC' | wc -l
 # wc -l = count the lines outputted by grep (each match is on a new line)
 
 #5
-
 echo "scale=3;" $(grep -o "A\|T" ../Data/E.coli.fasta | wc -l) / $(grep -o "G\|C" ../Data/E.coli.fasta | wc -l) | bc
 
 # EXPLANATION
 # command substitution: the shell will execute what is within $() then pass that to the command (aka echo in this case)
-
-
-
-
-
-
-
-
-1) Get rid of first line and newline characters so grep works correctly - save the truncated E.coli fasta in a new file
-# 2) The echos and greps are there (and wc after grep - see Q4 for explanation) so that the file 'Sum.txt' will eventually read out "(numA + num T)/(numG + numC)". Lots of redirecting to Sum.txt to do this.
-# Note that echo -n used: this stops the trailing \n when adding to Sum.txt, as bc (the calculator) won't be able to read the file if there's newline characters.
-# Also note that as each grep is a new command (&& not | used) the filename needs to be put everytime.
-# 3) 'scale=3;' put at the beginning so bc gives the answer to 3 decimal places
-# 4) After the echos and greps, the newline characters need to be taken out, as although echo -n has been used, the wc still produces a trailing newline. tr -d used to do this.
-# The output must be saved to a new file (hence > FinalSum.txt), as tr doesn't actually alter the file Sum.txt, it just prints out an altered version while leaving the actual file the same. 
-# The output couldn't be redirected back to Sum.txt as '< Sum.txt > Sum.txt' breaks everything.
-# 5) After all the newline characters have been removed, echo "" adds a newline character at the end (as without -n there's a trailing \n) as br doesn't work if there isn't \n at the end.
-# 6) Finally, print out the file FinalSum.txt using cat, and pipe it to bc so it can calculate the answer.
+# note that 2 sets of command substitution with a "/" in between that will print as it as and bc (see below) will interpret as divide.
+# "scale=3;" = printing this before the calculation means bc gives the answer to 3 decimal places
+# "A\|T" = grep searches for all instances of A or T, so resulting wc will be sum of both
+# pipe to bc: a command line calculator that reads and executes maths. there must be a \n at the end of the calculation and no \n inside the calculation(s).
