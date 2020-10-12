@@ -10,9 +10,14 @@
 
 # Date: Oct 2020
 
-if [[ ! *.tif ]];
-    then echo "No .tif files in current directory.";
+if [[ $1 ]]
+    then echo "No arguments required. Tiff2Png.sh will find .tif files from current directory.";
     exit 1
+fi
+
+if [[ $(ls *.tif | wc -w) == 0 ]]
+    then echo "No .tif files in current directory.";
+    exit 2
 fi
 
 for f in *.tif;
@@ -21,3 +26,5 @@ for f in *.tif;
         convert "$f" "$(basename "$f" .tif).png";
 
     done
+
+exit 0

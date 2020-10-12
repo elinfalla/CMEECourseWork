@@ -32,5 +32,6 @@ This week we covered:
 - **CountLines.sh** - Counts the lines in a file and prints it
 - **ConcatenateTwoFiles.sh** - Concatenates text files 1 and 2 by overwriting file 3
 - **Tiff2Png.sh** - Converts .tif files in directory to .png
+- **CompileLatex.sh** - Compiles a pdf from a LaTeX .tex file
 
 **Author:** Elin Falla, ef16@ic.ac.uk
