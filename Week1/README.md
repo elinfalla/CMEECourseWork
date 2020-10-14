@@ -6,19 +6,24 @@ This week we covered:
 - Git
 - LaTeX
 
-**Language(s):** Bash version 3.2.57(1)
+**Language(s):** Bash - version 3.2.57(1)
 
-**Dependencies:** imagemagick
+**Dependencies:** imagemagick, evince (MacOS only)
 
 **Installation:** 
-- `brew install imagemagick` (for MacOS)
-- `sudo apt install imagemagick` (for Linux users)
+- **imagemagick**
+	- `brew install imagemagick` (for MacOS)
+	- `sudo apt install imagemagick` (for Linux users)
+- **evince**
+	- `brew install evince` (for MacOS)
+	- (pre-installed on Linux)
 
 ### Project structure
 
 2 directories:
 - **Code** - shell scripts and text docs with answers
 - **Data** - data that some scripts are run on
+- **Results** - results eg. data manipulation outputs (note: empty)
 - (Local repo also contains **Sandbox** with test files)
 
 ### File descriptions
