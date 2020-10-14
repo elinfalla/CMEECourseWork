@@ -10,7 +10,8 @@
 
 # Date: Oct 2020
 
-rm $(basename "$1" .tex).pdf #remove existing pdf
+#Remove existing pdf
+rm $(basename "$1" .tex).pdf #use of basename to get file without .tex extension
 
 #Compile pdf multiple times, and bibtex
 pdflatex -halt-on-error -output-directory . -synctex=1 $1
@@ -18,15 +19,19 @@ pdflatex -halt-on-error -output-directory . -synctex=1 $1
 bibtex $(basename "$1" .tex)
 pdflatex -halt-on-error -output-directory . -synctex=1 $1
 pdflatex -halt-on-error -output-directory . -synctex=1 $1
+#options include: '-output-directory' and '-synctex=1'
 
 #Open pdf if file exists and isn't empty
 if [ -s $(basename "$1" .tex).pdf ];
 then
   evince $(basename "$1" .tex).pdf & #opens the pdf
 else
-  echo "$1.pdf is empty!";
+  echo "Pdf is empty";
 fi
 
-## Cleanup
+## Cleanup (-f: don't ask confirmation)
 rm -f {*~,*.aux,*.blg,*.bcf,*.nav,*.vrb,*.bbl,*.lot,*.dvi,*.log,\
-*.lof,*.nav,*.out,*.snm,*.toc,*.fdb,*.fls,*.synctex.*,*.cut}
+*.lof,*.nav,*.out,*.snm,*.toc,*.fdb,*.fls,*.synctex.*,*.cut} #no spaces is important
+
+#Move pdf to Results directory
+#mv $(basename "$1" .tex).pdf ../Results/

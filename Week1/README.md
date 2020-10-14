@@ -10,7 +10,9 @@ This week we covered:
 
 **Dependencies:** imagemagick
 
-**Installation:** brew install imagemagick (for MacOS)
+**Installation:** 
+- `brew install imagemagick` (for MacOS)
+- `sudo apt install imagemagick` (for Linux users)
 
 ### Project structure
 
@@ -33,5 +35,9 @@ This week we covered:
 - **ConcatenateTwoFiles.sh** - Concatenates text files 1 and 2 by overwriting file 3
 - **Tiff2Png.sh** - Converts .tif files in directory to .png
 - **CompileLatex.sh** - Compiles a pdf from a LaTeX .tex file
+- **CsvToSpace.sh** - Converts a comma separated file (csv) to a space separated .txt file
+- **Variables.sh** - Reads string from user and sums two integer inputs read from command line
+- **FirstExample.tex** - A basic LaTex document
+- **FirstBiblio.bib** - A simple reference used in the bibliography of FirstExample.tex
 
 **Author:** Elin Falla, ef16@ic.ac.uk
