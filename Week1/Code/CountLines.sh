@@ -12,7 +12,7 @@
 
 #Error message if too few files are given/arguments are not files
 if [[ ! -f $1 ]] #-f = file, $'n' = positional parameters, $0 = actual script, $1, $2 etc = other inputs
-    then echo "Please input a file as an argument.";
+    then echo "No file given. Please input a file as an argument.";
     exit 1 #non-zero exit means an error occurred
 
 #Error message if too many files given

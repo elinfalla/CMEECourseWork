@@ -13,13 +13,13 @@
 
 #Error message if too few files are given/arguments are not files
 if [[ ! -e $1 || ! -e $2 || ! -e $3 ]]; #-e = file, $'n' = positional parameters
-    then echo "Not enough files given. Script requires 3 files as arguments: 2 to concatenate and third to put them into.";
+    then echo "Not enough files given. Script requires 3 files as arguments: 2 to concatenate and an output file.";
     exit 1 #non-zero exit means an error occurred
 fi
 
 #Error message if too many files given
 if [[ -f $4 ]]
-    then echo "Too many files given. Script requires 3 files as arguments: 2 to concatenate and third to put them into."
+    then echo "Too many files given. Script requires 3 files as arguments: 2 to concatenate and an output file."
     exit 2
 fi
 

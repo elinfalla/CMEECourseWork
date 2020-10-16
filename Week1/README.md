@@ -20,7 +20,7 @@ This week we covered:
 
 ### Project structure
 
-2 directories:
+4 directories:
 - **Code** - shell scripts and text docs with answers
 - **Data** - data that some scripts are run on
 - **Results** - results eg. data manipulation outputs (note: empty)

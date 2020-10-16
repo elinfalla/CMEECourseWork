@@ -2,8 +2,8 @@
 *.tmp
 
 #Sandbox folder
-*/Sandbox/*
-*/Sandbox
+# */Sandbox/*
+# */Sandbox
 
 #Images
 *.png
@@ -43,6 +43,7 @@
 *.7z
 *.tar
 *.iso
+*.gz
 
 #Database
 *.mdb
@@ -55,3 +56,11 @@
 *.dll
 *.so
 *.class
+
+#Custom
+__pycache__
+*.pyc
+*.pyo
+*.aux
+*.log
+.idea

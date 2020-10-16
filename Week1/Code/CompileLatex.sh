@@ -10,6 +10,12 @@
 
 # Date: Oct 2020
 
+if [[ ! $1 ]]
+  then
+    echo "Please give .tex file (with extension) to compile as argument.";
+  exit 1
+fi
+
 #Remove existing pdf
 rm $(basename "$1" .tex).pdf #use of basename to get file without .tex extension
 

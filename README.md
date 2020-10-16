@@ -8,9 +8,14 @@ This repository contains all Coursework for the Imperial College London course "
 - R (version 3.4.2)
 - C
 
-**Dependencies:** imagemagick
+### Dependencies: 
 
-**Installation:**
+**Bash**
+- imagemagick
+- evince
+
+**Python**
+- pandas
 
 ### Project structure
 
