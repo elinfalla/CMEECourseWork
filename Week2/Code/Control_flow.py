@@ -50,6 +50,7 @@ def find_all_primes(x=22):
     return allprimes
 
 def main(argv):
+    """Main entry point of the program"""
     print(even_or_odd(22))
     print(even_or_odd(33))
     print(largest_divisor_five(120))
@@ -60,22 +61,6 @@ def main(argv):
     return 0
 
 if (__name__ == "__main__"):
-    status = main(sys.argv)
-    sys.exit(status)
-
-
-
-
-
-
-
-
-def main(argv):
-    """Main entry point of the program"""
-    print("This is a boilerplate") #NOTE: indented using two tabs
-    return 0
-
-if __name__ == "__main__":
     """Makes sure the "main" function is called from command line"""
-    status = main(sys.argv) #NOTE: indented using two tabs
+    status = main(sys.argv)
     sys.exit(status)
