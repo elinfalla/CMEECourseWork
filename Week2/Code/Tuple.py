@@ -21,3 +21,6 @@ for row in birds:
     print("Latin name:", row[0],
         "\nCommon name:", row[1],
         "\nMass:", row[2], "\n")
+
+# data = "".join([str("Latin name:%s\nCommon name:%s\nMass:%s\n\n") % (row[0], row[1], row[2]) for row in birds])
+# print(data)

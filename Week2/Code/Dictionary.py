@@ -23,9 +23,9 @@ taxa = [ ('Myotis lucifugus','Chiroptera'),
 
 taxa_dic = {}
 for row in taxa:
-    taxa_dic.setdefault(row[1], []).append(row[0])
+    taxa_dic.setdefault(row[1], set()).add(row[0])
 print(taxa_dic)
 
-#setdefault creates a new key only if it doesn't exist in the format (key, value)
-#setting the value to an empty list when creating the key allows appending of
-#multiple values per key
+# setdefault creates a new key only if it doesn't exist in the format (key, value)
+# setting the value to an empty list when creating the key allows appending of
+# multiple values per key
