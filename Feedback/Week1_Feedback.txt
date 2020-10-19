@@ -1,0 +1,834 @@
+Starting weekly feedback for Elin, Week1
+
+Current Points = 100
+
+Note that: 
+(1) Major sections begin with a double "====" line 
+(2) Subsections begin with a single "====" line 
+(3) Code output or text file content are printed within single "*****" lines 
+
+======================================================================
+======================================================================
+Your Git repo size this week is about 1.54 MiB on disk 
+
+PART 1: Checking project workflow...
+
+Found the following directories in parent directory: Week3, .git, Feedback, Week1, Week2
+
+Found the following files in parent directory: README.md, .gitignore
+
+Checking for key files in parent directory...
+
+Found .gitignore in parent directory, great! 
+
+Printing contents of .gitignore:
+
+**********************************************************************
+*~ 
+*.tmp
+
+#Sandbox folder
+# */Sandbox/*
+# */Sandbox
+
+#Images
+*.png
+*.tif
+*.jpg
+*.gif
+*.bmp
+*.psd
+
+#Videos
+*.mp4
+*.mkv
+*.avi
+*.mov
+*.mpg
+*.vob
+
+#Audio
+*.mp3
+*.aac
+*.wav
+*.flac
+
+#Documents
+*.pdf
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.ppt
+*.pptx
+*.odt
+
+#Archive
+*.zip
+*.rar
+*.7z
+*.tar
+*.iso
+*.gz
+
+#Database
+*.mdb
+*.accde
+*.frm
+*.sqlite
+
+#Executable
+*.exe
+*.dll
+*.so
+*.class
+
+#Custom
+__pycache__
+*.pyc
+*.pyo
+*.aux
+*.log
+.idea
+
+**********************************************************************
+
+Found README in parent directory, named: README.md
+
+Printing contents of README.md:
+
+**********************************************************************
+## CMEE Coursework Repository
+
+This repository contains all Coursework for the Imperial College London course "MSc Computational Ecology and Evolution" 2020-21.
+
+**Languages:**
+- Bash (version 3.2.57(1))
+- Python (version 3.6.3)
+- R (version 3.4.2)
+- C
+
+### Dependencies: 
+
+**Bash**
+- imagemagick
+- evince
+
+**Python**
+- pandas
+
+### Project structure
+
+Project is split into Week directories (eg. Week1, Week2) which contains coursework and scripts for that week.
+
+**Author:** Elin Falla, ef16@ic.ac.uk
+
+**********************************************************************
+
+======================================================================
+Looking for the weekly directories...
+
+Found 3 weekly directories: Week1, Week2, Week3
+
+The Week1 directory will be assessed 
+
+======================================================================
+======================================================================
+PART 2: Checking weekly code and workflow...
+
+======================================================================
+Assessing WEEK1...
+
+Found the following directories: Data, Code, Results, Sandbox
+
+Found the following files: README.md
+
+Checking for readme file in weekly directory...
+
+Found README in parent directory, named: README.md
+
+Printing contents of README.md:
+
+**********************************************************************
+## Week 1 Content
+
+This week we covered:
+- UXIX and Linux (command line)
+- Shell Scripting
+- Git
+- LaTeX
+
+**Language(s):** Bash - version 3.2.57(1)
+
+**Dependencies:** imagemagick, evince (MacOS only)
+
+**Installation:** 
+- **imagemagick**
+	- `brew install imagemagick` (for MacOS)
+	- `sudo apt install imagemagick` (for Linux users)
+- **evince**
+	- `brew install evince` (for MacOS)
+	- (pre-installed on Linux)
+
+### Project structure
+
+4 directories:
+- **Code** - shell scripts and text docs with answers
+- **Data** - data that some scripts are run on
+- **Results** - results eg. data manipulation outputs (note: empty)
+- (Local repo also contains **Sandbox** with test files)
+
+### File descriptions
+#### UNIX
+
+- **UnixPrac1.txt** - Contains answers to the 'UNIX and Linux' Practical
+
+#### Shell scripting
+
+- **Boilerplate.sh** - Simple shell script that prints 'This is a shell script'.
+- **TabToCsv.sh** - Takes a tab delimited file as an argument and converts it to a csv file (comma delimited).
+- **MyExampleScript.sh** - Assigns "Hello" and "$USER" to variables and prints 'Hello $USER' (ie. Hello elinfalla)
+- **CountLines.sh** - Counts the lines in a file and prints it
+- **ConcatenateTwoFiles.sh** - Concatenates text files 1 and 2 by overwriting file 3
+- **Tiff2Png.sh** - Converts .tif files in directory to .png
+- **CompileLatex.sh** - Compiles a pdf from a LaTeX .tex file
+- **CsvToSpace.sh** - Converts a comma separated file (csv) to a space separated .txt file
+- **Variables.sh** - Reads string from user and sums two integer inputs read from command line
+- **FirstExample.tex** - A basic LaTex document
+- **FirstBiblio.bib** - A simple reference used in the bibliography of FirstExample.tex
+
+**Author:** Elin Falla, ef16@ic.ac.uk
+
+**********************************************************************
+
+Results directory is empty - good! 
+
+Found 12 code files: ConcatenateTwoFiles.sh, CsvToSpace.sh, Variables.sh, UnixPrac1.txt, CountLines.sh, FirstBiblio.bib, Tiff2Png.sh, FirstExample.tex, Tabtocsv.sh, CompileLatex.sh, MyExampleScript.sh, Boilerplate.sh
+
+======================================================================
+Testing script/code files...
+
+======================================================================
+Inspecting script file ConcatenateTwoFiles.sh...
+
+File contents are:
+
+**********************************************************************
+#!bin/bash
+
+# Author: Elin Falla - ef16@ic.ac.uk
+
+# Script: ConcatenateTwoFiles.sh
+
+# Desc: Overwrites and concatenates files
+
+# Arguments: 3 -> 3 text files
+
+# Date: Oct 2020
+
+
+#Error message if too few files are given/arguments are not files
+if [[ ! -e $1 || ! -e $2 || ! -e $3 ]]; #-e = file, $'n' = positional parameters
+    then echo "Not enough files given. Script requires 3 files as arguments: 2 to concatenate and an output file.";
+    exit 1 #non-zero exit means an error occurred
+fi
+
+#Error message if too many files given
+if [[ -f $4 ]]
+    then echo "Too many files given. Script requires 3 files as arguments: 2 to concatenate and an output file."
+    exit 2
+fi
+
+#Overwrite the contents of 3 with 1
+cat $1 > $3
+#Concatenate the contents of 2 into 3 (ie. put 1 and 2 into 3)
+cat $2 >> $3
+echo "Merged file is:"
+cat $3
+
+#Move resulting concatenated file into Data directory
+mv $3 ../Data
+
+exit 0 #exit 0 indicates correct output, no errors
+
+**********************************************************************
+
+Testing ConcatenateTwoFiles.sh...
+
+Output (only first 500 characters): 
+
+
+**********************************************************************
+Not enough files given. Script requires 3 files as arguments: 2 to concatenate and an output file.
+
+**********************************************************************
+
+Code ran without errors
+
+Time consumed = 0.00368s
+
+======================================================================
+Inspecting script file CsvToSpace.sh...
+
+File contents are:
+
+**********************************************************************
+#!bin/bash
+
+# Author: Elin Falla - ef16@ic.ac.uk
+
+# Script: CsvToSpace.sh
+
+# Desc: turns a comma separated values (csv) file into a space separated one.
+
+# Arguments: 1 -> a csv file
+
+# Date: Oct 2020
+
+#If no valid file is given, print error message and exit
+if [[ ! -e $1 ]]; #-e: file
+    then echo "No file given. Please give CSV file as argument.";
+    exit 1
+
+#If the user inputs two or more files, print error message and exit
+elif [[ -e $2 ]];
+    then echo "Please give only one CSV file as an argument (with relative filepath if different from current directory).";
+    exit 2
+
+#If the user doesn't input a .csv file, print error message and exit
+elif [[ $1 != *.csv ]];
+    then echo "Please input CSV file with .csv extension as an argument.";
+    exit 3
+fi
+
+echo "Creating a space separated version of $1 ..."
+
+# Substitute commas for spaces, transfer it to a file with a csv extention, move to Data directory
+cat $1 | tr -s "," " " >> ../Data/$(basename "$1" .csv).txt #basename removes extensions - in this case csv
+echo "Complete!"
+
+exit 0
+
+**********************************************************************
+
+Testing CsvToSpace.sh...
+
+Output (only first 500 characters): 
+
+
+**********************************************************************
+No file given. Please give CSV file as argument.
+
+**********************************************************************
+
+Code ran without errors
+
+Time consumed = 0.00706s
+
+======================================================================
+Inspecting script file Variables.sh...
+
+File contents are:
+
+**********************************************************************
+#!bin/bash
+
+# Author: Elin Falla - ef16@ic.ac.uk
+
+# Script: Variables.sh
+
+# Desc: Two sections: one shows use of variables and the other reads multiple values
+
+# Arguments: 3 -> a string, then two integers separated by a space
+
+# Date: Oct 2020
+
+
+# Shows use of variables
+MyVar='some string'
+echo 'The current value of the variable is ' $MyVar
+echo 'Please enter a new string'
+read MyVar #reads user input
+echo 'the current value of the variable is' $MyVar
+
+
+# Reading multiple values
+echo 'Enter two numbers separated by space(s)'
+read a b
+echo 'you entered' $a 'and' $b '. Their sum is:'
+MySum=`expr $a + $b` #expr is useful for simple maths, back ticks (`) can be used instead of $()
+echo $MySum
+
+**********************************************************************
+
+Testing Variables.sh...
+
+Output (only first 500 characters): 
+
+
+**********************************************************************
+The current value of the variable is  some string
+Please enter a new string
+the current value of the variable is
+Enter two numbers separated by space(s)
+you entered and . Their sum is:
+
+
+**********************************************************************
+
+Encountered error (or warning):
+expr: syntax error: missing argument after ‘+’
+
+======================================================================
+Inspecting script file UnixPrac1.txt...
+
+File contents are:
+
+**********************************************************************
+#1
+wc -l ../Data/E.coli.fasta ../Data/407228326.fasta ../Data/407228412.fasta
+
+# EXPLANATION
+# wc = word count
+# -l = number of lines (-w is words, -c is characters, if no specification all 3 will be shown)
+# filepath needs to leave current directory (Code) and go into Data directory where the files are
+# can put multiple files separated by a space, will give individual numbers and a total
+
+#2
+tail -n +2 ../Data/E.coli.fasta
+
+# EXPLANATION
+# tail = shows the bottom of a file (opposite of 'head')
+# -n = indicates to show by lines (rather than characters for example)
+# numbers with a leading '+' indicate counting from the beginning of the file ('-' is from the end and is the default)
+# therefore '+2' means show all lines starting from the second one, thereby cutting out the first line
+
+#3
+tail -n +2 ../Data/E.coli.fasta | tr -d '\n' | wc -c
+
+# EXPLANATION
+# first part same as question 2 to ensure the first line not counted (as it's not part of the sequence)
+# wc -c counts characters - will give length of sequence
+
+#4
+sed '1d' ../Data/E.coli.fasta | tr -d '\n' | grep -o -i 'ATGC' | wc -l
+
+# EXPLANATION
+# sed modifies files - 1 = first line, d = delete, it doesn't edit the actual file (need -i to do that)
+# tr -d = delete, \n = new line
+# grep finds strings, -o = prints only the matching part of the lines (-c doesn't work as only accounts for one ocurrence per line and have removed \n)
+# wc -l = count the lines outputted by grep (each match is on a new line)
+
+#5
+echo "scale=3;" $(grep -o "A\|T" ../Data/E.coli.fasta | wc -l) / $(grep -o "G\|C" ../Data/E.coli.fasta | wc -l) | bc
+
+# EXPLANATION
+# command substitution: the shell will execute what is within $() then pass that to the command (aka echo in this case)
+# note that 2 sets of command substitution with a "/" in between that will print as it as and bc (see below) will interpret as divide.
+# "scale=3;" = printing this before the calculation means bc gives the answer to 3 decimal places
+# "A\|T" = grep searches for all instances of A or T, so resulting wc will be sum of both
+# pipe to bc: a command line calculator that reads and executes maths. there must be a \n at the end of the calculation and no \n inside the calculation(s).
+
+**********************************************************************
+
+Testing UnixPrac1.txt...
+
+======================================================================
+Inspecting script file CountLines.sh...
+
+File contents are:
+
+**********************************************************************
+#!bin/bash
+
+# Author: Elin Falla - ef16@ic.ac.uk
+
+# Script: CountLines.sh
+
+# Desc: counts lines of a file
+
+# Arguments: 1 -> a text file
+
+# Date: Oct 2020
+
+#Error message if too few files are given/arguments are not files
+if [[ ! -f $1 ]] #-f = file, $'n' = positional parameters, $0 = actual script, $1, $2 etc = other inputs
+    then echo "No file given. Please input a file as an argument.";
+    exit 1 #non-zero exit means an error occurred
+
+#Error message if too many files given
+elif [[ -f $2 ]]
+    then echo "Too many files given. Script requires 1 file as argument."
+    exit 2
+fi
+
+NumLines=`wc -l < $1` #< means do wc-l on $1
+echo "The file $1 has $NumLines lines"
+
+exit 0
+
+**********************************************************************
+
+Testing CountLines.sh...
+
+Output (only first 500 characters): 
+
+
+**********************************************************************
+No file given. Please input a file as an argument.
+
+**********************************************************************
+
+Code ran without errors
+
+Time consumed = 0.00412s
+
+======================================================================
+Inspecting script file FirstBiblio.bib...
+
+File contents are:
+
+**********************************************************************
+@article{einstein1905does,
+  title={Does the inertia of a body depend upon its energy-content},
+  author={Einstein, Albert},
+  journal={Ann Phys},
+  volume={18},
+  pages={639--641},
+  year={1905}
+}
+**********************************************************************
+
+Testing FirstBiblio.bib...
+
+======================================================================
+Inspecting script file Tiff2Png.sh...
+
+File contents are:
+
+**********************************************************************
+#!bin/bash
+
+# Author: Elin Falla - ef16@ic.ac.uk
+
+# Script: Tiff2Png.sh
+
+# Desc: Converts .tif files in directory to .png files
+
+# Arguments: none
+
+# Date: Oct 2020
+
+
+#If user has inputted a directory to search through then move to that directory
+if [[ -d $1 ]]
+  then cd $1
+
+#If user has not inputted a valid directory
+elif [[ ! -d $1 ]]
+
+#Check if user has attempted to input a directory
+  then if [[ $# != 0 ]] # $#: number of arguments
+  
+  #If this is the case, print error message to user and exit
+    then echo "Directory doesn't exist. Please input filepath to directory or \
+no argument if you wish to search the current directory."
+    exit 1
+  fi
+fi
+
+# If directory contains no .tif files to convert, print error message to user and exit
+if [[ $(ls *.tif | wc -w) -eq 0 ]] #-eq: ==, this does ls on the tif files and uses wc to check it's not 0
+    then echo "There are no .tif files to convert in the current directory.";
+    exit 2
+fi
+
+# For each file in the directory, convert it to a .png and change the extension
+for f in *.tif;
+    do
+        echo "Converting $f"; # $f as it represents a file with a .tif extension
+        convert "$f" "$(basename "$f" .tif).png"
+
+        #Move resulting .png file into Data directory
+        mv $(basename "$f" .tif).png ../Data;
+    done
+#After all files converted, let user know process is complete
+echo "Complete!"
+
+exit 0
+
+**********************************************************************
+
+Testing Tiff2Png.sh...
+
+Output (only first 500 characters): 
+
+
+**********************************************************************
+There are no .tif files to convert in the current directory.
+
+**********************************************************************
+
+Encountered error (or warning):
+ls: cannot access '*.tif': No such file or directory
+
+======================================================================
+Inspecting script file FirstExample.tex...
+
+File contents are:
+
+**********************************************************************
+\documentclass[12pt]{article}
+
+\title{A Simple Document}
+
+\author{Elin Falla}
+
+\date{}
+
+\begin{document}
+  \maketitle
+  
+  \begin{abstract}
+    This paper must be cool!
+  \end{abstract}
+  
+  \section{Introduction}
+    Blah Blahhhh
+    
+  \section{Materials \& Methods}
+    One of the most famous equations is:
+    \begin{equation}
+      E = mc^2
+    \end{equation}
+    This equation was first proposed by Albert Einstein in 1905
+    \cite{einstein1905does}.
+    
+    \bibliographystyle{plain}
+    \bibliography{FirstBiblio}
+	
+\end{document}
+**********************************************************************
+
+Testing FirstExample.tex...
+
+======================================================================
+Inspecting script file Tabtocsv.sh...
+
+File contents are:
+
+**********************************************************************
+#!bin/bash
+
+# Author: Elin Falla - ef16@ic.ac.uk
+
+# Script: Tabtocsv.sh
+
+# Desc: substitute the tabs in files with commas
+
+# Arguments: 1 -> a tab delimited file
+
+# Date: Oct 2020
+
+#If user doesn't input a file, print error message and exit
+if [[ ! -e $1 ]]; #-e = file
+    then echo "No file given. Please give tab delimted file as argument.";
+    exit 1
+
+#If user inputs 2 or more files, print error message and exit
+elif [[ -e $2 ]];
+    then echo "Please give only one tab delimted file as an argument.";
+    exit 2
+fi
+
+echo "Creating a comma delimited version of $1 ..."
+
+# Use string manipulations to extract base name of file (no extension)
+path=$1 #$1 is the filepath of the inputted file
+file=${path##*/} # ${variable%%pattern} trims the longest match from start of string
+#(#-shortest) so */ removes all directories, leaving just the filename and extension
+base=${file%%.*} # ${variable%%pattern} trims the longest match from end of string
+#(%=shortest) so .* removes any extension
+
+# Substitute tabs for commas then transfer it to a file with a csv extention
+cat $1 | tr -s "\t" "," >> ../Data/$base.csv
+echo "Done!"
+
+exit 0
+
+**********************************************************************
+
+Testing Tabtocsv.sh...
+
+Output (only first 500 characters): 
+
+
+**********************************************************************
+No file given. Please give tab delimted file as argument.
+
+**********************************************************************
+
+Code ran without errors
+
+Time consumed = 0.00338s
+
+======================================================================
+Inspecting script file CompileLatex.sh...
+
+File contents are:
+
+**********************************************************************
+#!/bin/bash
+
+# Author: Elin Falla - ef16@ic.ac.uk
+
+# Script: CompileLatex.sh
+
+# Desc: compiles a LaTex pdf from a .tex file
+
+# Arguments: 1 -> a .tex document
+
+# Date: Oct 2020
+
+if [[ ! $1 ]]
+  then
+    echo "Please give .tex file (with extension) to compile as argument.";
+  exit 1
+fi
+
+#Remove existing pdf
+rm $(basename "$1" .tex).pdf #use of basename to get file without .tex extension
+
+#Compile pdf multiple times, and bibtex
+pdflatex -halt-on-error -output-directory . -synctex=1 $1
+pdflatex -halt-on-error -output-directory . -synctex=1 $1
+bibtex $(basename "$1" .tex)
+pdflatex -halt-on-error -output-directory . -synctex=1 $1
+pdflatex -halt-on-error -output-directory . -synctex=1 $1
+#options include: '-output-directory' and '-synctex=1'
+
+#Open pdf if file exists and isn't empty
+if [ -s $(basename "$1" .tex).pdf ];
+then
+  evince $(basename "$1" .tex).pdf & #opens the pdf
+else
+  echo "Pdf is empty";
+fi
+
+## Cleanup (-f: don't ask confirmation)
+rm -f {*~,*.aux,*.blg,*.bcf,*.nav,*.vrb,*.bbl,*.lot,*.dvi,*.log,\
+*.lof,*.nav,*.out,*.snm,*.toc,*.fdb,*.fls,*.synctex.*,*.cut} #no spaces is important
+
+#Move pdf to Results directory
+#mv $(basename "$1" .tex).pdf ../Results/
+
+**********************************************************************
+
+Testing CompileLatex.sh...
+
+Output (only first 500 characters): 
+
+
+**********************************************************************
+Please give .tex file (with extension) to compile as argument.
+
+**********************************************************************
+
+Code ran without errors
+
+Time consumed = 0.00369s
+
+======================================================================
+Inspecting script file MyExampleScript.sh...
+
+File contents are:
+
+**********************************************************************
+#!bin/bash
+
+# Author: Elin Falla - ef16@ic.ac.uk
+
+# Script: MyExampleScript.sh
+
+# Desc: Says hello to the user
+
+# Arguments: none
+
+# Date: Oct 2020
+
+msg1="Hello"
+msg2=$USER
+echo "$msg1 $msg2"
+echo "Hello $USER"
+
+exit 0
+**********************************************************************
+
+Testing MyExampleScript.sh...
+
+Output (only first 500 characters): 
+
+
+**********************************************************************
+Hello mhasoba
+Hello mhasoba
+
+**********************************************************************
+
+Code ran without errors
+
+Time consumed = 0.00515s
+
+======================================================================
+Inspecting script file Boilerplate.sh...
+
+File contents are:
+
+**********************************************************************
+#!bin/bash
+
+# Author: Elin Falla - ef16@ic.ac.uk
+
+# Script: Boilerplate.sh
+
+# Desc: simple boilerplate for shell scripts
+
+# Arguments: none
+
+# Date: Oct 2020
+
+echo -e "\nThis is a shell script! \n" #-e allows the interpretation of backslash escapes
+
+exit 0
+**********************************************************************
+
+Testing Boilerplate.sh...
+
+Output (only first 500 characters): 
+
+
+**********************************************************************
+
+This is a shell script! 
+
+
+**********************************************************************
+
+Code ran without errors
+
+Time consumed = 0.00619s
+
+======================================================================
+======================================================================
+Finished running scripts
+
+Ran into 2 errors
+
+======================================================================
+======================================================================
+
+FINISHED WEEKLY ASSESSMENT
+
+Current Points for the Week = 100
+
+NOTE THAT THESE ARE POINTS, NOT MARKS FOR THE WEEK!
