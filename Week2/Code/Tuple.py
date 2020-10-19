@@ -1,3 +1,11 @@
+#!usr/bin/env python3
+
+"""Script that prints the output of 'birds' dataset by species, showing latin name, common name and body mass."""
+
+__author__ = 'Elin Falla (ef16@ic.ac.uk)'
+__version__ = '0.0.1'
+
+# Data #
 birds = ( ('Passerculus sandwichensis','Savannah sparrow',18.7),
           ('Delichon urbica','House martin',19),
           ('Junco phaeonotus','Yellow-eyed junco',19.5),

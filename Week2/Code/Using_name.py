@@ -1,5 +1,10 @@
 #!usr/bin/env python3
-#Filename: using_name.py
+
+"""Script that demonstrates how (__name__ == "__main"__) works."""
+
+__author__ = 'Elin Falla (ef16@ic.ac.uk)'
+__version__ = '0.0.1'
+# Filename: using_name.py
 
 if __name__ == '__main__':
     print("This program is being run by itself")

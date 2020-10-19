@@ -8,20 +8,22 @@ __author__ = 'Your name (your@email.address.com)'
 __version__ = '0.0.1'
 __license__ = 'License for this code/program'
 
-## Imports ##
-import sys #module to interface our program with operating system
+# Imports #
+import sys  # module to interface our program with operating system
 
-## Constants ##
+# Constants #
 
-#Put global constants here
+# Put global constants here
 
-## Functions ##
+
+# Functions #
 def main(argv):
     """Main entry point of the program"""
-    print("This is a boilerplate") #NOTE: indented using two tabs
+    print("This is a boilerplate")
     return 0
+
 
 if __name__ == "__main__":
     """Makes sure the "main" function is called from command line"""
-    status = main(sys.argv) #NOTE: indented using two tabs
+    status = main(sys.argv)
     sys.exit(status)

@@ -1,5 +1,13 @@
-taxa = [ ('Myotis lucifugus','Chiroptera'),
-         ('Gerbillus henleyi','Rodentia',),
+#!usr/bin/env python3
+
+"""Script that populates a dictionary with taxa dataset so that it maps order names to sets of taxa."""
+
+__author__ = 'Elin Falla (ef16@ic.ac.uk)'
+__version__ = '0.0.1'
+
+# Data #
+taxa = [('Myotis lucifugus', 'Chiroptera'),
+         ('Gerbillus henleyi', 'Rodentia',),
          ('Peromyscus crinitus', 'Rodentia'),
          ('Mus domesticus', 'Rodentia'),
          ('Cleithrionomys rutilus', 'Rodentia'),
@@ -8,7 +16,7 @@ taxa = [ ('Myotis lucifugus','Chiroptera'),
          ('Lyacon pictus', 'Carnivora'),
          ('Arctocephalus gazella', 'Carnivora'),
          ('Canis lupus', 'Carnivora'),
-        ]
+         ]
 
 # Write a short python script to populate a dictionary called taxa_dic
 # derived from  taxa so that it maps order names to sets of taxa.
@@ -19,7 +27,7 @@ taxa = [ ('Myotis lucifugus','Chiroptera'),
 #  OR,
 # 'Chiroptera': {'Myotis lucifugus'} ... etc
 
-#taxa_dic = {row[1]: row[0] for row in taxa if row[1] not in taxa_dic }
+# list comprehension (doesn't work): taxa_dic = {row[1]: row[0] for row in taxa if row[1] not in taxa_dic}
 
 taxa_dic = {}
 for row in taxa:

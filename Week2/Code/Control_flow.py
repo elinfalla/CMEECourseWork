@@ -5,16 +5,16 @@
 __author__ = 'Elin Falla (ef16@ic.ac.uk)'
 __version__ = '0.0.1'
 
-## Imports ##
+# Imports #
 import sys
 
-## Functions ##
-
-def even_or_odd(x=0): #if not specified, x should take value 0 (prevent error message)
+# Functions #
+def even_or_odd(x=0):  #if not specified, x should take value 0 (prevents error message)
     """Find whether a number x is even or odd."""
     if x % 2 == 0:
         return "%d is Even!" % x
     return "%d is Odd!" % x
+
 
 def largest_divisor_five(x=120):
     """Find which is the largest divisor of x among 2,3,4,5."""
@@ -31,6 +31,7 @@ def largest_divisor_five(x=120):
         return "No divisor found for %d!" % x
     return "The largest divisor of %d is %d" % (x, largest)
 
+
 def is_prime(x=70):
     """Find whether an integer is prime."""
     for i in range(2, x):
@@ -39,6 +40,7 @@ def is_prime(x=70):
             return False
     print("%d is a prime!" % x)
     return True
+
 
 def find_all_primes(x=22):
     """Find all the primes up to x"""
@@ -49,8 +51,9 @@ def find_all_primes(x=22):
     print("There are %d primes between 2 and %d" % (len(allprimes), x))
     return allprimes
 
+
 def main(argv):
-    """Main entry point of the program"""
+    """Main entry point of the program: runs the functions"""
     print(even_or_odd(22))
     print(even_or_odd(33))
     print(largest_divisor_five(120))
@@ -60,7 +63,8 @@ def main(argv):
     print(find_all_primes(100))
     return 0
 
-if (__name__ == "__main__"):
+
+if __name__ == "__main__":
     """Makes sure the "main" function is called from command line"""
     status = main(sys.argv)
     sys.exit(status)

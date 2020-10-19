@@ -1,6 +1,13 @@
+#!/usr/bin/env python3
+
+""" Some while and for loops that prints 'hello' if a particular numerical expression is true."""
+
+__author__ = "Elin Falla (ekf16@ic.ac.uk)"
+__version__ = "0.0.1"
+
 
 for j in range(12):
-    if j % 3 == 0: #if j is a multiple of 3
+    if j % 3 == 0:  # if j is a multiple of 3
         print('hello')
 
 for j in range(15):

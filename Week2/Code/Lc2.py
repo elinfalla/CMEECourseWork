@@ -1,3 +1,14 @@
+#!usr/bin/env python3
+
+"""Script that contains list comprehensions and for loops to manipulate UK rainfall data to:
+(1) create a list of month,rainfall tuples where the amount of rain was >100m
+(2) create a list of months where the amount of rain was <50mm."""
+
+__author__ = 'Elin Falla (ef16@ic.ac.uk)'
+__version__ = '0.0.1'
+
+# Data #
+
 # Average UK Rainfall (mm) for 1910 by month
 # http://www.metoffice.gov.uk/climate/uk/datasets
 rainfall = (('JAN',111.4),

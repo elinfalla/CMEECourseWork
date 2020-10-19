@@ -6,10 +6,11 @@ alignment and the number of matches to a file called Alignment_output.txt."""
 __author__ = "Elin Falla, ef16@ic.ac.uk"
 __version__ = "0.0.1"
 
+# Imports #
 import pandas as pd
 import sys
 
-
+# Functions #
 def string_swap(seq1, seq2):
     """Assign the longer sequence to s1, and the shorter to s2.
     Calculate l1 and l2: l1 is length of the longer sequence, l2 that of the shorter."""
