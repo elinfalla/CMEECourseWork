@@ -14,7 +14,7 @@ This week we covered:
 ### Project structure
 
 4 directories:
-- **Code** - shell scripts and text docs with answers
+- **Code** - python scripts (see 'File descriptions' section)
 - **Data** - data that some scripts are run on
 - **Results** - results eg. data manipulation outputs (note: empty)
 - (Local repo also contains **Sandbox** with test files)
@@ -40,4 +40,4 @@ This week we covered:
 - **Sysargv.py** -Demonstrates how to use 'sys' package
 - **Test_control_flow.py** - Demonstrates the use of 'doctest' package
 - **Tuple.py** - Prints the output of a 'birds' dataset by species, showing latin name, common name and body mass
-- **Using_name.py** - d=Demonstrates how (\__name__ == "\__main"__) works
+- **Using_name.py** - Demonstrates how (\_\_name\_\_ == "\_\_main\_\_") works
