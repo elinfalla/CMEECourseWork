@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 # Author: Elin Falla - ef16@ic.ac.uk
 
@@ -41,7 +41,7 @@ for f in *.tif;
         convert "$f" "$(basename "$f" .tif).png"
 
         #Move resulting .png file into Data directory
-        mv $(basename "$f" .tif).png ../Data;
+        mv "$(basename "$f" .tif).png" ../Data;
     done
 #After all files converted, let user know process is complete
 echo "Complete!"
