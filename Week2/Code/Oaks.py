@@ -3,6 +3,7 @@
 """ Defines a function that finds oak species from a dataset and uses for loops and list comprehensions to
  print them in a list"""
 
+__appname__ = 'Oaks.py'
 __author__ = "Elin Falla (ekf16@ic.ac.uk)"
 __version__ = "0.0.1"
 

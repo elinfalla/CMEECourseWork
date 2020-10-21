@@ -1,10 +1,9 @@
 #!usr/bin/env python3
 
-"""Description of this program or application.
-    You can use several lines """
+"""Basic boilerplate script demonstrating use of "main" function"""
 
-__appname__ = '[application name here]'
-__author__ = 'Your name (your@email.address.com)'
+__appname__ = 'Boilerplate.py'
+__author__ = 'Elin Falla (ef16@ic.ac.uk)'
 __version__ = '0.0.1'
 __license__ = 'License for this code/program'
 

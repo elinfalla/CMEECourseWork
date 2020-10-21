@@ -2,6 +2,7 @@
 
 """Functions that demonstrate the scope of global and local variables in different contexts."""
 
+__appname__ = 'Scope.py'
 __author__ = 'Elin Falla (ef16@ic.ac.uk)'
 __version__ = '0.0.1'
 

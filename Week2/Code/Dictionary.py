@@ -2,6 +2,7 @@
 
 """Script that populates a dictionary with taxa dataset so that it maps order names to sets of taxa."""
 
+__appname__ = 'Dictionary.py'
 __author__ = 'Elin Falla (ef16@ic.ac.uk)'
 __version__ = '0.0.1'
 

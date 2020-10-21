@@ -2,6 +2,7 @@
 
 """Script that opens and reads a test file, both with and without blank lines."""
 
+__appname__ = 'Basic_io1.py'
 __author__ = 'Elin Falla (ef16@ic.ac.uk)'
 __version__ = '0.0.1'
 

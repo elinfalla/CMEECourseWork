@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-""" Some while and for loops that prints 'hello' if a particular numerical expression is true."""
+""" Some while and for loops that print 'hello' if a particular numerical expression is true."""
 
+__appname__ = 'Cfexercises2.py'
 __author__ = "Elin Falla (ekf16@ic.ac.uk)"
 __version__ = "0.0.1"
 

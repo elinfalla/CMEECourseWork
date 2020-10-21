@@ -4,6 +4,7 @@
 (1) create a list of month,rainfall tuples where the amount of rain was >100m
 (2) create a list of months where the amount of rain was <50mm."""
 
+__appname__ = 'Lc2.py'
 __author__ = 'Elin Falla (ef16@ic.ac.uk)'
 __version__ = '0.0.1'
 

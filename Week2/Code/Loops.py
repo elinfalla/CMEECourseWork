@@ -2,6 +2,7 @@
 
 """ Some for and while loops that print various numerical/list manipulations."""
 
+__appname__ = 'Loops.py'
 __author__ = "Elin Falla (ekf16@ic.ac.uk)"
 __version__ = "0.0.1"
 

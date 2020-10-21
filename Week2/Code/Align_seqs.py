@@ -3,12 +3,14 @@
 """Finds the best alignment of two DNA sequences - ie. the alignment with the most matched bases. Writes the
 alignment and the number of matches to a file called Alignment_output.txt."""
 
+__appname__ = "Align_seqs.py"
 __author__ = "Elin Falla, ef16@ic.ac.uk"
 __version__ = "0.0.1"
 
 # Imports #
 import pandas as pd
 import sys
+
 
 # Functions #
 def string_swap(seq1, seq2):
@@ -46,7 +48,7 @@ def calculate_score(s1, s2, l1, l2, startpoint):
     print(score)
     print(" ")
 
-    return score
+    return score, matched
 
 
 def find_best_align(s1, s2, l1, l2):
@@ -54,33 +56,47 @@ def find_best_align(s1, s2, l1, l2):
 
     my_best_align = None
     my_best_score = -1
+    my_best_match = None
 
     for i in range(l1):  # Note that you just take the last alignment with the highest score
-        z = calculate_score(s1, s2, l1, l2, i)
+        z, matched = calculate_score(s1, s2, l1, l2, i)
         if z > my_best_score:
             my_best_align = "." * i + s2  # prints number of '.' to get to startpoint (which is i here)
             my_best_score = z
+            my_best_match = "." * i + matched
 
+    print(my_best_match)
     print(my_best_align)
     print(s1)
     print("Best score:", my_best_score)
 
-    return my_best_align, my_best_score
+    return my_best_align, my_best_score, my_best_match
 
 
 def main(argv):
     """Main entry point of the program: reads input file, calculates the best match, and writes it to output file."""
-    sequences = pd.read_csv('../Data/Sequences.csv', header=None)
 
-    seq1 = sequences[1][0]  # [1]=second column, [0]=first row
-    seq2 = sequences[1][1]  # [1]=second column, [1]=second row
+    # Open the csv file with the DNA sequences
+    sequences = open("../Data/Sequences.csv", "r")
 
+    # Split the csv file by lines and assign the 2 sequences to variables
+    seqs = sequences.read().splitlines()
+    seq1 = seqs[0]
+    seq2 = seqs[1]
+
+    # Run string_swap to find longer sequence
     s1, s2, l1, l2 = string_swap(seq1, seq2)
 
-    my_best_align, my_best_score = find_best_align(s1, s2, l1, l2)
+    # Run find_best_align to find best alignment of sequences
+    my_best_align, my_best_score, my_best_match = find_best_align(s1, s2, l1, l2)
 
+    # Write result to an output file called 'Alignment_output.txt'
     output_file = open("../Results/Alignment_output.txt", "w+")
-    output_file.write("%s\n%s\nBest score: %s\n" % (my_best_align, s1, my_best_score))
+    output_file.write("%s\n%s\n%s\nBest score: %s\n" % (my_best_match, my_best_align, s1, my_best_score))
+
+    # Close the input and output files
+    sequences.close()
+    output_file.close()
 
     return 0
 
@@ -94,3 +110,4 @@ if __name__ == "__main__":
 # function that turns fasta input into string
 # function that takes in two dna seqs and outputs (my_best_align, s1, my_best_score)
 # main that reads files and outputs resulting file
+# Have error message for if 0 or 1 files given, if 0 use default

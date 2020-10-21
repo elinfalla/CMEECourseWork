@@ -2,6 +2,7 @@
 
 """Script that uses pickle to save an object and reload it."""
 
+__appname__ = 'Basic_io3.py'
 __author__ = 'Elin Falla (ef16@ic.ac.uk)'
 __version__ = '0.0.1'
 

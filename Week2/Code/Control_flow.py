@@ -2,6 +2,7 @@
 
 """Some functions exemplifying the use of control statements"""
 
+__appname__ = "Control_flow.py"
 __author__ = 'Elin Falla (ef16@ic.ac.uk)'
 __version__ = '0.0.1'
 

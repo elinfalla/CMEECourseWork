@@ -2,6 +2,7 @@
 
 """Script that prints the output of 'birds' dataset by species, showing latin name, common name and body mass."""
 
+__appname__ = 'Tuple.py'
 __author__ = 'Elin Falla (ef16@ic.ac.uk)'
 __version__ = '0.0.1'
 

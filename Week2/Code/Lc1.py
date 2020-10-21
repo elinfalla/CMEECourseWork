@@ -3,6 +3,7 @@
 """Script that contains list comprehensions and for loops to create separate lists containing the latin names,
 common names, and body masses of birds from a birds database."""
 
+__appname__ = 'Lc1.py'
 __author__ = 'Elin Falla (ef16@ic.ac.uk)'
 __version__ = '0.0.1'
 

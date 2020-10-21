@@ -1,7 +1,7 @@
 #!usr/bin/env python3
 
 """Script that reads a csv file and both prints it to the console and writes select data to a new file."""
-
+__appname__ = 'Basic_csv.py'
 __author__ = 'Elin Falla (ef16@ic.ac.uk)'
 __version__ = '0.0.1'
 

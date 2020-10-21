@@ -2,6 +2,7 @@
 
 """ Some functions that sort or manipulate number inputs"""
 
+__appname__ = 'Cfexercises1.py'
 __author__ = "Elin Falla (ekf16@ic.ac.uk)"
 __version__ = "0.0.1"
 

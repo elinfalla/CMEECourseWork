@@ -2,6 +2,7 @@
 
 """Script that creates a file and writes a list to it."""
 
+__appname__ = 'Basic_io2.py'
 __author__ = 'Elin Falla (ef16@ic.ac.uk)'
 __version__ = '0.0.1'
 
