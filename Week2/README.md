@@ -1,4 +1,4 @@
-## Week 1 Content
+## Week 2 Content
 
 This week we covered:
 - Intro to Python
