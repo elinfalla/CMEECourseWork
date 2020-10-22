@@ -9,8 +9,9 @@ __version__ = '0.0.1'
 # Imports #
 import sys
 
+
 # Functions #
-def even_or_odd(x=0):  #if not specified, x should take value 0 (prevents error message)
+def even_or_odd(x=0):  # if not specified, x should take value 0 (prevents error message)
     """Find whether a number x is even or odd."""
     if x % 2 == 0:
         return "%d is Even!" % x

@@ -8,6 +8,7 @@ __version__ = "0.0.1"
 
 
 def buggyfunc(x):
+    """A function that tries dividing two integers and prints an error message if not possible (ie. dividing by 0)."""
     y = x
     for i in range(x):
         try:
