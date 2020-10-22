@@ -1,6 +1,7 @@
 #!usr/bin/env python3
 
 """Script that reads a csv file and both prints it to the console and writes select data to a new file."""
+
 __appname__ = 'Basic_csv.py'
 __author__ = 'Elin Falla (ef16@ic.ac.uk)'
 __version__ = '0.0.1'
@@ -11,7 +12,7 @@ import csv
 
 # Read a file containing:
 # 'Species','Infraorder','Family','Distribution','Body mass male (kg)'
-f = open('../Data/testcsv.csv', 'r')
+f = open('../Data/Testcsv.csv', 'r')
 
 csvread = csv.reader(f)
 temp = []
@@ -23,8 +24,8 @@ for row in csvread:
 f.close()
 
 # Write a file containing only species name and body mass
-f = open('../Data/testcsv.csv', 'r')
-g = open('../Data/bodymass.csv', 'w')
+f = open('../Data/Testcsv.csv', 'r')
+g = open('../Data/Bodymass.csv', 'w')
 
 csvread = csv.reader(f)
 csvwrite = csv.writer(g)

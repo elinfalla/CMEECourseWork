@@ -12,7 +12,7 @@ __version__ = '0.0.1'
 #####################
 
 # Open a file for Reading
-f = open('../Sandbox/test.txt', 'r')
+f = open('../Data/Test.txt', 'r')
 
 # Use 'implicit' for loop:
 # If the object is a file, python will cycle over lines
@@ -23,7 +23,7 @@ for line in f:
 f.close()
 
 # Same example, skip blank lines
-f = open('../Sandbox/test.txt', 'r')
+f = open('../Data/Test.txt', 'r')
 for line in f:
     if len(line.strip()) > 0:
         print(line)

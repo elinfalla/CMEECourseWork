@@ -16,12 +16,12 @@ import pickle
 # To save an object (even complex) for later use
 my_dictionary = {"a key": 10, "another key": 11}
 
-f = open('../Sandbox/testp.p', 'wb')  # b means accepts binary files
+f = open('../Data/Testp.p', 'wb')  # b means accepts binary files
 pickle.dump(my_dictionary, f)  # write my_dictionary into the file
 f.close()
 
 # Load the data again
-f = open('../Sandbox/testp.p', 'rb')  # read, accepts binary files
+f = open('../Data/Testp.p', 'rb')  # read, accepts binary files
 another_dictionary = pickle.load(f)
 f.close()
 
