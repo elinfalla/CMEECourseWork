@@ -33,7 +33,7 @@ height <- TreeHeight(trees$Angle.degrees, trees$Distance.m)
 trees["Tree.Height.m"] <- height
 
 #Write output to CSV file
-write.csv(trees, "../Results/TreeHts.csv")
+write.csv(trees, "../Results/TreeHts.csv", row.names = FALSE)
 
 
 ### FUNCTIONS DEMONSTRATING DIFFERENT WAYS TO IMPLEMENT, AND SPEED TEST OF EACH ###
