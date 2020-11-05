@@ -3,6 +3,7 @@
 This week's directory actually covers Week 3 and Week 4 content.
 
 We covered:
+
 **Intro to R**
 - R basics
 - R data structures (and dataframes)
@@ -28,6 +29,7 @@ We covered:
 - reshape2
 
 **Installation:**
+
 Install from within R:
 - **maps**
   - `install.packages("maps")`
