@@ -10,7 +10,7 @@ This week we covered:
 
 **Dependencies:** imagemagick, evince (MacOS only)
 
-**Installation:** 
+**Installation:**
 - **imagemagick**
 	- `brew install imagemagick` (for MacOS)
 	- `sudo apt install imagemagick` (for Linux users)

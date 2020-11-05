@@ -8,7 +8,7 @@ This repository contains all Coursework for the Imperial College London course "
 - R (version 3.4.2)
 - C
 
-### Dependencies: 
+### Dependencies:
 
 **Bash**
 - imagemagick
@@ -16,6 +16,11 @@ This repository contains all Coursework for the Imperial College London course "
 
 **Python**
 - pandas
+
+**R**
+- maps
+- tidyverse (in particular: tidyr, dplyr, ggplot2, purrr, tibble, readr)
+- ggthemes
 
 ### Project structure
 
