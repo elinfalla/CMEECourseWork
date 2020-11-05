@@ -1,5 +1,7 @@
 #!/usr/bin/env R
 
+### Demonstrates printing in loops and with if statements
+
 # delete everything
 rm(list=ls(all=TRUE))
 

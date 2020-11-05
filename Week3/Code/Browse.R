@@ -1,10 +1,12 @@
 #!/usr/bin/env R
 
+### Script that defines a function to simulate exponential growth
+
 # delete everything
 rm(list=ls(all=TRUE))
 
 Exponential <- function(N0 = 1, r = 1, generations = 10) {
-  # Runs a simulation of exponential growth
+  # Runs a simulation of Browse.Rexponential growth
   # Returns a vector of length 'generations'
   
   N <- rep(NA, generations) #Creates a vector of NA

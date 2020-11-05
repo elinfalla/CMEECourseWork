@@ -1,5 +1,8 @@
 #!/usr/bin/env R
 
+### Script that demonstrates the increased efficiency of preallocation of vectors
+### (when compared to no preallocation)
+
 # delete everything
 rm(list=ls(all=TRUE))
 

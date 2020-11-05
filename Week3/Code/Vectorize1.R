@@ -1,5 +1,7 @@
 #!/usr/bin/env R
 
+### Script demonstrating speed of using vectorisation when manipulating matrices
+
 # delete everything
 rm(list=ls(all=TRUE))
 

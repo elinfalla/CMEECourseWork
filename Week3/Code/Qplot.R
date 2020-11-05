@@ -1,11 +1,10 @@
 #!/usr/bin/env R
 
+#packages
 require(ggplot2)
 
-
- #### Qplot - The command qplot allows you to use only a single dataset 
- #### and a single set of “aesthetics” (x, y, etc.)
-
+#### Exercises demonstrating use of qplot() - allows you to use only a single dataset 
+#### and a single set of “aesthetics” (x, y, etc.)
 
 # delete everything
 rm(list=ls(all=TRUE))

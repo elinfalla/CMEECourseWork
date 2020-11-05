@@ -1,5 +1,7 @@
 #!/usr/bin/env R
 
+## Script containing a function that runs a simulation of the Ricker model
+
 # delete everything
 rm(list=ls(all=TRUE))
 

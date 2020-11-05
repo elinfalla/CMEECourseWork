@@ -1,5 +1,7 @@
 #!/usr/bin/env R
 
+#### Script demonstrating use of a user-written function with apply() function
+
 # delete everything
 rm(list=ls(all=TRUE))
 

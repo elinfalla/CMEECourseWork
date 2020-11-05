@@ -1,6 +1,10 @@
 #!/usr/bin/env R
 
+### Exercises demonstrating use of ggplot() function
+
+#packages
 require(ggplot2)
+#note: reshape2 and ggthemes used later
 
 # delete everything
 rm(list=ls(all=TRUE))
@@ -277,4 +281,18 @@ p <- p + geom_text(aes(x = 60, y = 0, #position of text
                        label = "sqrt(alpha) * 2* pi"), 
                    parse = TRUE, size = 6, 
                    colour = "blue")
+p
+
+
+######## ggthemes package ########
+# package has additional geoms, themes and scales for ggplot
+
+require("ggthemes")
+
+p <- ggplot(MyDF, aes(x = log(Predator.mass), y = log(Prey.mass),
+                      colour = Type.of.feeding.interaction )) +
+  geom_point(size=I(2), shape=I(10)) + theme_bw()
+
+p + geom_rangeframe() + # now fine tune the geom to Tufte's range frame
+  theme_tufte() # and theme to Tufte's minimal ink theme    
 p

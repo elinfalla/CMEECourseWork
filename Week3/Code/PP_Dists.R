@@ -1,7 +1,7 @@
 #!/usr/bin/env R
 
 ### Script that plots density subplots for predator mass, prey mass and mass ratio by 
-### feeding interaction type and outputs their means and medians to a csv
+### feeding interaction type and outputs their means and medians to a csv file
 
 rm(list=ls())
 

@@ -1,5 +1,7 @@
 #!/usr/bin/env R
 
+### Stochastic implementation of the Ricker model and a vectorised version
+
 # delete everything
 rm(list=ls(all=TRUE))
 
@@ -38,6 +40,7 @@ stochrickvect <- function(p0=runif(10000,.5,1.5),r=1.2,K=1,numyears=10,sigma=0.2
   
   #iterate over the rows starting from the second and compute the ricker model
   for (yr in 2:numyears) {
+    
     #note: rnorm creates a vector of random variables of length p0 and applies one to each value in the row
     N[yr,] <- N[yr-1,] * exp(r * (1 - N[yr - 1,] / K) + rnorm(length(p0),0,sigma)) 
   }

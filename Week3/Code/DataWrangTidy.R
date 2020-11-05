@@ -4,10 +4,10 @@
 ## Wrangling the Pound Hill Dataset using Tidyverse
 ################################################################
 
+#packages
 require(tidyr)
 require(dplyr)
-
-rm(list = ls())
+require(tibble)
 
 # delete everything
 rm(list=ls(all=TRUE))
@@ -55,7 +55,7 @@ MyWrangledData <-
                    !Quadrat, 
                  names_to = "Species", 
                  values_to = "Count")
- 
+
 #Assign correct data types to each column
 MyWrangledData$Cultivation <- MyWrangledData$Cultivation %>% as.factor
 MyWrangledData$Block <- MyWrangledData$Block %>% as.factor

@@ -1,8 +1,8 @@
 #!/usr/bin/env R
 
-require(ggplot2)
-
 ### Exercise demonstrating use of geom_text for annotating plots
+
+require(ggplot2)
 
 rm(list=ls())
 

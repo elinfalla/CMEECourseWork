@@ -1,6 +1,9 @@
 #!/usr/bin/env R
 
-require(xtable)
+#### Test hypothesis that temperatures in successive years are correlated by 
+#### calculating the correlation coefficient of random permutations of the 
+#### dataset and comparing to the actual dataset to give a p-value
+
 
 # delete everything
 rm(list=ls(all=TRUE))
@@ -21,11 +24,13 @@ cor_permutation <- function(ats) {
   
   # assign ats with shuffled rows to new df: uses sample(replace=F) which randomly selects each element once
   permuteDF <- ats[sample(nrow(ats), replace=F),]
+  
   # correlate the shuffled ats datasets without the first and last element - equivalent to pairing each yr with yr-1
   result <- cor(permuteDF$Temp[-nrow(ats)], permuteDF$Temp[-1])
   
   return(result)
 }
+
 
 # assign number of permutations
 num_runs <- 10000
@@ -34,19 +39,18 @@ num_runs <- 10000
 permutations <- rep(NA, num_runs)
 
 # for loop that calculates corr for num_run permutations and saves each to vector
-#par(mfrow=c(num_runs/3, num_runs/2))
 for (run in 1:num_runs) {
   permutations[run] <- cor_permutation(ats)
 }
 
-#calculate p-value: all permutations larger than cor(ats) (ie. in correct order) divided by all permutations
+# calculate p-value: all permutations larger than cor(ats) (ie. in correct order) divided by all permutations
 p_value <- sum(permutations > cor(ats$Temp[-nrow(ats)], ats$Temp[-1])) / length(permutations)
 
 print("*************")
 print(paste("P-VALUE:", p_value))
 print("*************")
 
-#draw histogram to show significance of p-value
+# draw histogram to show significance of p-value
 par(mfrow=c(1,1))
 hist(x = permutations, 
      breaks = 40, 

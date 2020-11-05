@@ -1,5 +1,8 @@
 #!/usr/bin/env R
 
+### A set of functions demonstrating the use of conditionals 
+### (eg. function to check whether a number is prime)
+
 # delete everything
 rm(list=ls(all=TRUE))
 

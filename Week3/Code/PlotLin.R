@@ -1,8 +1,9 @@
 #!/usr/bin/env R
 
-require(ggplot2)
-
 ### Plots linear regression and demonstrates use of mathematical display
+
+#packages
+require(ggplot2)
 
 rm(list = ls())
 

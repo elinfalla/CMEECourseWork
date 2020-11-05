@@ -1,5 +1,10 @@
 #!/usr/bin/env R
 
+#### Exercises demonstrating plotting in base R
+
+# packages
+require(tidyverse)
+
 # delete everything
 rm(list=ls(all=TRUE))
 
@@ -8,7 +13,6 @@ dim(MyDF)
 str(MyDF)
 head(MyDF)
 
-require(tidyverse)
 dplyr::glimpse(MyDF)
 
 #Change some columns to factor type

@@ -1,8 +1,11 @@
 #!/usr/bin/env R
 
+### Script that shows a graphical representation of Girko's circular law
+
 #packages
 require(ggplot2)
 
+#remove everything
 rm(list=ls())
 
 #First build function that will calculate and return ellipse (predicted boundary of eigenvalues)

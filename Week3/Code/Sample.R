@@ -1,5 +1,7 @@
 #!/usr/bin/env R
 
+### Script that demonstrates speed of vectorisation and sapply and lapply functions
+
 # delete everything
 rm(list=ls(all=TRUE))
 

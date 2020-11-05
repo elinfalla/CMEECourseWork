@@ -1,5 +1,7 @@
 #!/usr/bin/env R
 
+#### Script that demonstrates a simple for loop - prints only odd numbers
+
 # delete everything
 rm(list=ls(all=TRUE))
 

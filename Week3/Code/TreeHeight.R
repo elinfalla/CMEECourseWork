@@ -18,7 +18,7 @@ rm(list=ls(all=TRUE))
 TreeHeight <- function(degrees, distance) {
   radians <- degrees * pi / 180 #turns degrees into radians
   height <- distance * tan(radians) #calculates height of tree
-  #print(paste("Tree height is:", height))
+  print(paste("Tree height is:", height))
   
   return(height)
 }

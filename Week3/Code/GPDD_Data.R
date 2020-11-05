@@ -1,10 +1,15 @@
 #!/usr/bin/env R
 
-require(maps)
-
 ### Script that maps out all the locations from GPDD dataset onto a world map
 
-gpdd <- load("../Data/GPDDFiltered.RData")
+#packages
+require(maps)
+
+#remove everything
+rm(list=ls())
+
+#load dataset
+load("../Data/GPDDFiltered.RData")
 
 #draw world map
 map(database = "world")

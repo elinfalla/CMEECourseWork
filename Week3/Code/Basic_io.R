@@ -1,7 +1,6 @@
 #!/usr/bin/env R
 
-# A simple script to illustrate R input-output.
-# Run line by line and check inputs outputs to understand what is happening
+#### A simple script to illustrate R input-output.
 
 # delete everything
 rm(list=ls(all=TRUE))

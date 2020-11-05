@@ -4,7 +4,6 @@
 ################## Wrangling the Pound Hill Dataset ############
 ################################################################
 
-
 # delete everything
 rm(list=ls(all=TRUE))
 
