@@ -1,14 +1,19 @@
 #!/usr/bin/env R
 
+require(xtable)
+
 # delete everything
-#rm(list=ls(all=TRUE))
+rm(list=ls(all=TRUE))
 
 # load temperatures dataset (as "ats")
 load("../Data/KeyWestAnnualMeanTemperature.RData")
 
 # plot Years vs Temp
-plot(ats$Year, ats$Temp)
-
+plot(ats$Year, ats$Temp, 
+     xlab = "Year",
+     ylab = "Temperature",
+     pch = 4,
+     ylim = c(23.5, 26.5))
 
 cor_permutation <- function(ats) {
   # generates a random permutation of the dataset
@@ -16,12 +21,12 @@ cor_permutation <- function(ats) {
   
   # assign ats with shuffled rows to new df: uses sample(replace=F) which randomly selects each element once
   permuteDF <- ats[sample(nrow(ats), replace=F),]
-  
   # correlate the shuffled ats datasets without the first and last element - equivalent to pairing each yr with yr-1
   result <- cor(permuteDF$Temp[-nrow(ats)], permuteDF$Temp[-1])
   
   return(result)
 }
+
 # assign number of permutations
 num_runs <- 10000
 
@@ -29,23 +34,30 @@ num_runs <- 10000
 permutations <- rep(NA, num_runs)
 
 # for loop that calculates corr for num_run permutations and saves each to vector
+#par(mfrow=c(num_runs/3, num_runs/2))
 for (run in 1:num_runs) {
   permutations[run] <- cor_permutation(ats)
 }
 
 #calculate p-value: all permutations larger than cor(ats) (ie. in correct order) divided by all permutations
 p_value <- sum(permutations > cor(ats$Temp[-nrow(ats)], ats$Temp[-1])) / length(permutations)
-#if (p_value == 0) {
-  # print(paste(permutations[permutations > cor(ats$Temp[-nrow(ats)], ats$Temp[-1])]))
-  # print(paste("cor(ats):", cor(ats$Temp[-nrow(ats)], ats$Temp[-1])))
-  # print(paste("sum(permutations > cor(ats):", sum(permutations > cor(ats$Temp[-nrow(ats)], ats$Temp[-1]))))
-  # print(paste("len(permutations):", length(permutations)))
-  # print(format(round(p_value, 5), nsmall = 5))
-#}
+
 print("*************")
 print(paste("P-VALUE:", p_value))
 print("*************")
 
-hist(#y=seq(0.9,1,length.out = length(permutations)),
-     x = permutations)
-abline(v = cor(ats$Temp[-nrow(ats)], ats$Temp[-1]), col = "red")
+#draw histogram to show significance of p-value
+par(mfrow=c(1,1))
+hist(x = permutations, 
+     breaks = 40, 
+     main = "",
+     xlim = c(-0.4, 0.4),
+     xlab = "Correlation coefficient",
+     col = "lightgreen")
+abline(v = cor(ats$Temp[-nrow(ats)], ats$Temp[-1]), 
+       col = "red",
+       lwd = 2)
+abline(v = quantile(permutations, probs = 0.95), 
+       col = "blue",
+       lwd = "2")
+text(0.205, 790, "p = 0.05", col = "blue")
