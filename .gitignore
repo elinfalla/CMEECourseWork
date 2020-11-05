@@ -1,4 +1,4 @@
-*~ 
+*~
 *.tmp
 
 #Sandbox folder
@@ -64,3 +64,4 @@ __pycache__
 *.aux
 *.log
 .idea
+*.tex.bak
