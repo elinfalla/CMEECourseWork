@@ -168,8 +168,7 @@ hist(log(MyDF$Prey.mass),
      add = TRUE)
 
 #Add legend
-legend('topleft',c('Predators','Prey'),
+legend('topleft', c('Predators','Prey'),
        fill=c(rgb(1, 0, 0, 0.5), rgb(0, 0, 1, 0.5)))
 
-graphics.off() # can also use dev.off()
-     
+graphics.off() # can also use dev.off() - doesnt save to pdf otherwise
