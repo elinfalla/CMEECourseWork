@@ -46,7 +46,7 @@ print(paste("P-VALUE:", p_value))
 print("*************")
 
 # plot Years vs Temp
-pdf("../Results/ats_TempVSyear.pdf")
+pdf("../Data/ats_TempVSyear.pdf")
 
 plot(ats$Year, ats$Temp, 
      xlab = "Year",
@@ -57,7 +57,7 @@ plot(ats$Year, ats$Temp,
 dev.off()
 
 # plot T vs T-1
-pdf("../Results/ats_YearVSyear+1.pdf")
+pdf("../Data/ats_YearVSyear+1.pdf")
 
 plot(ats$Temp[-nrow(ats)], ats$Temp[-1],
      xlab = "Temperature in year n (Celcius)",
@@ -72,7 +72,7 @@ plot(ats$Temp[-nrow(ats)], ats$Temp[-1],
 dev.off()
 
 # draw histogram to show significance of p-value
-pdf("../Results/ats_Corr_hist.pdf")
+pdf("../Data/ats_Corr_hist.pdf")
 
 hist(x = permutations, 
      breaks = 40, 
