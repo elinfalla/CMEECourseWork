@@ -11,13 +11,6 @@ rm(list=ls(all=TRUE))
 # load temperatures dataset (as "ats")
 load("../Data/KeyWestAnnualMeanTemperature.RData")
 
-# plot Years vs Temp
-plot(ats$Year, ats$Temp, 
-     xlab = "Year",
-     ylab = "Temperature",
-     pch = 4,
-     ylim = c(23.5, 26.5))
-
 cor_permutation <- function(ats) {
   # generates a random permutation of the dataset
   # calculates correlation coeff for pair-wise temperatures
@@ -31,6 +24,8 @@ cor_permutation <- function(ats) {
   return(result)
 }
 
+#set a seed so results are reproducible
+set.seed(75)
 
 # assign number of permutations
 num_runs <- 10000
@@ -50,8 +45,35 @@ print("*************")
 print(paste("P-VALUE:", p_value))
 print("*************")
 
+# plot Years vs Temp
+pdf("../Results/ats_TempVSyear.pdf")
+
+plot(ats$Year, ats$Temp, 
+     xlab = "Year",
+     ylab = "Temperature (Celcius)",
+     pch = 16,
+     ylim = c(23.5, 26.5))
+
+dev.off()
+
+# plot T vs T-1
+pdf("../Results/ats_YearVSyear+1.pdf")
+
+plot(ats$Temp[-nrow(ats)], ats$Temp[-1],
+     xlab = "Temperature in year n (Celcius)",
+     ylab = "Temperature in year n + 1 (Celcius)",
+     pch = 16)
+
+##### not including abline using lm as the variables are not independent
+# model <- lm(ats$Temp[-nrow(ats)] ~ ats$Temp[-1])
+# abline(model$coefficients[1], model$coefficients[2], 
+#        col = "red")
+
+dev.off()
+
 # draw histogram to show significance of p-value
-par(mfrow=c(1,1))
+pdf("../Results/ats_Corr_hist.pdf")
+
 hist(x = permutations, 
      breaks = 40, 
      main = "",
@@ -65,3 +87,5 @@ abline(v = quantile(permutations, probs = 0.95),
        col = "blue",
        lwd = "2")
 text(0.205, 790, "p = 0.05", col = "blue")
+
+dev.off()
