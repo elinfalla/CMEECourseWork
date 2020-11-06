@@ -57,6 +57,10 @@
 *.so
 *.class
 
+#R
+.RData
+.Rhistory
+
 #Custom
 __pycache__
 *.pyc
