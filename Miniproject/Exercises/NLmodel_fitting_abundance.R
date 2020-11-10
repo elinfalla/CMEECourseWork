@@ -98,9 +98,18 @@ ggplot(data, aes(x = Time, y = LogN)) +
 
 #taking log exposes deviation from the data - when the values are very small, the fit might be 
 #visually fine, but that's just becuase the numbers are so small that you can't tell it's deviating
+# taking logarithm is a nonlinear transformation - small numbers close to zero yield dispropotionately large
+# deviations, allowing us to see inaccuracy in logistic growth model
 
+#plot to demonstrate this
+ggplot(data, aes(x = N, y = LogN)) +
+  geom_point(size = 3) +
+  theme(aspect.ratio = 1) +
+  labs(x = "N", y = "log(N)")
+
+
+############ OWN EXERCISE (NOT ON PAGE) ###################
 #once done, fit a linear model to the curve = try quadratic or cubic
-
 powMod <- function(x, a, b) {
   return(a * x^b)
 }
@@ -114,6 +123,7 @@ timepoints <- timepoints <- seq(0, 22, 0.1)
 quadratic.points <- powMod(x = timepoints,
                     a = coef(model_quad)["a"],
                     b = coef(model_quad)["b"])
+
 df2 <- data.frame(timepoints, quadratic.points)
 df2$model <- "Quadratic equation"
 names(df2) <- c("Time", "N", "model")
@@ -130,20 +140,21 @@ ggplot(data, aes(x = Time, y = N)) +
   labs(x = "Time", y = "Cell number")
 
 
-
 model_poly <- lm(N ~ poly(Time, 3), data = data)
 
 summary(model_poly)
 
 timepoints <- seq(0, 22, 0.1)
 
-poly.points <- pow3Mod(x = timepoints,
-                       a = coef(model_poly)["a"],
-                       b = coef(model_poly)["b"],
-                       c = coef(model_poly)["c"],
-                       d = coef(model_poly)["d"])
+# poly.points <- pow3Mod(x = timepoints,
+#                        a = coef(model_poly)["a"],
+#                        b = coef(model_poly)["b"],
+#                        c = coef(model_poly)["c"],
+#                        d = coef(model_poly)["d"])
 
-df3 <- data.frame(timepoints, poly)
+poly.points <- predict.lm(model_poly, data.frame(Time = timepoints))
+
+df3 <- data.frame(timepoints, poly.points)
 df3$model <- "Polynomial equation"
 names(df3) <- c("Time", "N", "model")
 
@@ -160,3 +171,81 @@ ggplot(data, aes(x = Time, y = N)) +
             size = 1) +
   theme(aspect.ratio = 1) + #make the plot square
   labs(x = "Time", y = "Cell number")
+
+############ END OF OWN EXERCISE (NOT ON PAGE) #################
+
+### fit gompertz model, which takes lag phase into account
+
+gompertz_model <- function(t, r_max, N_max, N_0, t_lag) { ## Modified gompertz growth model (Zwietering 1990)
+  return(N_0 + (N_max - N_0) * exp(-exp(r_max * exp(1) * ((t_lag - t)/((N_max - N_0) * log(10))) + 1)))
+  
+}
+
+#define starting values
+N_0_start <- min(data$LogN) # lowest population size, note log scale
+N_max_start <- max(data$LogN) # highest population size, note log scale
+r_max_start <- 0.62 # use our previous estimate from the OLS fitting from above
+
+#calculate t_lag = last timepoint of lagphase
+differentials <- diff(diff(data$LogN)) #2nd order differentials = tells you how fast gradient is changing
+
+#find the index of the max value (ie. when population starting to take off)
+max_diff <- which.max(differentials)
+
+#use this to get value of time at this index
+t_lag_start <- data$Time[max_diff]
+
+# can also be done in one:
+# t_lag_start <- data$Time[which.max(diff(diff(data$LogN)))]
+
+# fit the model using these start values
+fit_gompertz <- nlsLM(LogN ~ gompertz_model(t = Time, r_max, N_max, N_0, t_lag), data = data,
+                      start = list(t_lag=t_lag_start, r_max=r_max_start, N_0 = N_0_start, N_max = N_max_start))
+summary(fit_gompertz)
+
+#see how fits of two linear models compare
+timepoints <- seq(0, 24, by = 0.1)
+
+#need to get log of logistic points (beacuse gompertz uses logged data)
+# log.logistic_points <- log(logistic_points) <- could do this if the timepoints were the same but they're not
+
+logistic_points <- log(logistic_model(t = timepoints, 
+                                      r_max = coef(fit_logistic)["r_max"], 
+                                      N_max = coef(fit_logistic)["N_max"], 
+                                      N_0 = coef(fit_logistic)["N_0"]))
+
+#calculate points for fit curve of gompertz
+gompertz_points <- gompertz_model(t = timepoints,
+                                  r_max = coef(fit_gompertz)["r_max"],
+                                  N_max = coef(fit_gompertz)["N_max"],
+                                  N_0 = coef(fit_gompertz)["N_0"],
+                                  t_lag = coef(fit_gompertz)["t_lag"])
+
+df1 <- data.frame(timepoints, logistic_points)
+df1$model <- "Logistic model"
+names(df1) <- c("Time", "LogN", "model")
+
+df2 <- data.frame(timepoints, gompertz_points)
+df2$model <- "Gompertz model"
+names(df2) <- c("Time", "LogN", "model")
+
+model_frame <- rbind(df1, df2)
+
+p <- ggplot(data, aes(x = Time, y = LogN)) +
+  geom_point(size = 3) +
+  geom_line(data = model_frame, aes(x = Time, y = LogN, col = model), size = 1) +
+  theme_bw() + # make the background white
+  theme(aspect.ratio=1)+ # make the plot square 
+  labs(x = "Time", y = "log(Abundance)")
+p  
+
+#find AIC values (include 2 extras I did)
+fits <- list(fit_logistic, fit_gompertz, model_poly, model_quad)
+names(fits) <- c("logistic", "gompertz", "poly", "quad")
+aics <- lapply(X = fits, FUN = AIC)
+
+fits[which.min(aics)]
+aics[which.min(aics)]
+
+#check next best isn't within 2 - TODO
+

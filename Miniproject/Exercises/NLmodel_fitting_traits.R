@@ -43,6 +43,7 @@ Predic2PlotPow <- powMod(Lengths, coef(PowFit)["a"], coef(PowFit)["b"])
 
 #now plot the data
 plot(Data2Fit$TotalLength, Data2Fit$BodyWeight)
+
 #predic2plotpow allows us to plot the model line
 lines(Lengths, Predic2PlotPow,
       col = 'blue',
