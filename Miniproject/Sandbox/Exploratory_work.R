@@ -49,7 +49,7 @@ for (count in c(5, 60, 112)) {
   #all_aics[[count]] <- aics
 }
 
-subset <- therm[therm$ID == 111,] #try 111 again, seems to break but also fit?
+subset <- therm[therm$ID == 456,] #try 111 again, seems to break but also fit?
 nrow(subset)
 ggplot(subset, aes(x = ConTemp, y = OriginalTraitValue, col = as.factor(ID))) +
   geom_point() +
@@ -69,7 +69,7 @@ briere <- function(t, t_0, t_m, b_0) {
 
 t_0_start <- min(subset$ConTemp)
 t_m_start <- max(subset$ConTemp)
-b_0_start <- 100
+b_0_start <- 1e-4
 
 fit_briere <- nlsLM(OriginalTraitValue ~ briere(t = ConTemp, t_0, t_m, b_0),
                     data = subset,
@@ -100,7 +100,7 @@ names(cubicDF) <- c("Temp", "TraitVal", "model")
 models_to_plot <- rbind(briereDF, quadDF, cubicDF)                          
 ggplot(subset, aes(x = ConTemp, y = OriginalTraitValue)) + 
   geom_point(size = 3) +
-  geom_line(data = models_to_plot, aes(x = Temp, y = TraitVal, col = model))
+  geom_line(data = briereDF, aes(x = Temp, y = TraitVal, col = model))
 
 #calculate AIC,BIC
 fits <- list(fit_briere, fit_cubic, fit_quad)
