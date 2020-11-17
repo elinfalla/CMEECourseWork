@@ -12,9 +12,8 @@ import sys
 # define a function that returns the growth rate of consumer and resource population
 # at a given time step
 
-
-
 def main(argv):
+    """Main function"""
 
     def dCR_dt(pops, t=0):
         """Returns the growth rate of consumer and resource population using the Lotka-Volterra model"""
@@ -25,7 +24,7 @@ def main(argv):
         dCdt = -z * C + e * a * R * C
 
         return sc.array([dRdt, dCdt])
-    """Main function"""
+
 
     # assign parameter values
     K = 100
@@ -89,6 +88,4 @@ def main(argv):
 if __name__ == "__main__":
     status = main(sys.argv)
     sys.exit(status)
-
-# import os ????
 
