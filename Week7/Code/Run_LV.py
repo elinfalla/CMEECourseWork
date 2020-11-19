@@ -5,7 +5,6 @@
 # packages
 import cProfile
 import pstats
-from io import StringIO
 
 import LV2
 import LV1
@@ -28,7 +27,7 @@ for script in scripts:
     # create stats based on the profile
     ps = pstats.Stats(pr)
 
-    # sort stats by cumulative time then print first 20 lines to get largest cumtimes
+    # sort stats by cumulative time then print first 20 lines to get only largest cumtimes
     ps.sort_stats('cumtime').print_stats(20)
 
 

@@ -24,7 +24,6 @@ def main(argv):
 
         return sc.array([dRdt, dCdt])
 
-
     # assign parameter values
     r = 1.
     a = 0.1
@@ -41,11 +40,11 @@ def main(argv):
 
     # numerically integrate this system forward from those starting conditions
     pops, infodict = integrate.odeint(dCR_dt, RC0, t, full_output=True)
-    pops
-    infodict  # dictionary with additional information
-    type(infodict)
-    infodict.keys()
-    infodict['message']  # many functionalities including returning message about whether integration successful
+    # pops
+    # infodict  # dictionary with additional information
+    # type(infodict)
+    # infodict.keys()
+    # infodict['message']  # many functionalities including returning message about whether integration successful
 
     # open an empty figure object
     f1 = p.figure()
@@ -70,6 +69,7 @@ def main(argv):
     p.xlabel("Resource density")
     p.ylabel("Consumer density")
     p.title("Consumer-Resource population dynamics")
+
     f2.savefig("../Results/LV_model2.pdf")
 
     return 0

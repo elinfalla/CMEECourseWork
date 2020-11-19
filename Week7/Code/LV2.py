@@ -41,7 +41,7 @@ def main(argv):
         e = float(sys.argv[4])
 
     # define time vector
-    t = sc.linspace(0, 15, 1000)  # note arbitrary time units
+    t = sc.linspace(0, 200, 1000)  # note arbitrary time units
 
     # set initial conditions of 2 populations
     R0 = 10
@@ -64,7 +64,7 @@ def main(argv):
     p.grid()
     p.legend(loc="best")
     p.legend()
-    p.xlabel("Time\nr = %f, a = %f, z = %f, e = %f" % (r, a, z, e))
+    p.xlabel("Time\nr = %r, a = %r, z = %r, e = %r" % (r, a, z, e))
     p.ylabel("Population density")
     p.title("Consumer-Resource population dynamics")
 
@@ -76,7 +76,7 @@ def main(argv):
 
     p.plot(pops[:, 0], pops[:, 1], "-r")
     p.grid()
-    p.xlabel("Resource density\nr = %f, a = %f, z = %f, e = %f" % (r, a, z, e))
+    p.xlabel("Resource density\nr = %r, a = %r, z = %r, e = %r" % (r, a, z, e))
     p.ylabel("Consumer density")
     p.title("Consumer-Resource population dynamics")
 
