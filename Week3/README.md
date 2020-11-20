@@ -44,7 +44,7 @@ Install from within R:
 ### Project structure
 
 4 directories:
-- **Code** - python scripts (see 'File descriptions' section)
+- **Code** - R scripts (see 'File descriptions' section)
 - **Data** - data that some scripts are run on
 - **Results** - results eg. data manipulation outputs/graphs (note: empty until code is run)
 - (Local repo also contains **Sandbox** with test files)
