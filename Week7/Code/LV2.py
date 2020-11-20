@@ -44,7 +44,7 @@ def main(argv):
         e = float(sys.argv[4])
 
     # define time vector
-    t = sc.linspace(0, 200, 1000)  # note arbitrary time units
+    t = sc.linspace(0, 100, 1000)  # note arbitrary time units
 
     # set initial conditions of 2 populations
     R0 = 10
@@ -55,11 +55,12 @@ def main(argv):
     pops, infodict = integrate.odeint(dCR_dt, RC0, t, full_output=True)
 
     # print final populations to screen
-    print("Final R =", pops[-1, 0])
-    print("Final C =", pops[-1, 1])
+    print("Final R =", round(pops[-1, 0], 3))
+    print("Final C =", round(pops[-1, 1], 3))
 
     # open an empty figure object
-    f1 = p.figure(figsize=(7, 6))
+    # define axes as ax to use in text() later
+    f1, ax = p.subplots()  # default number of subplots is 1
 
     # plot
     p.plot(t, pops[:, 0], 'g-', label="Resource density")
@@ -67,21 +68,50 @@ def main(argv):
     p.grid()
     p.legend(loc="best")
     p.legend()
-    p.xlabel("Time\nr = %r, a = %r, z = %r, e = %r" % (r, a, z, e))
+    p.xlabel("Time")
     p.ylabel("Population density")
     p.title("Consumer-Resource population dynamics")
+
+    # generate text giving values of r, a, z, e
+    # first generate a string with contents of text box
+    textstr = '\n'.join((
+        r'r=%.2f' % r,
+        r'a=%.2f' % a,
+        r'z=%.2f' % z,
+        r'e=%.2f' % e
+    ))
+    # pass textstr into text. note use of ax to make coords in relation to axes not data points (ie. 0-1)
+    p.text(0.87, 0.65, textstr,
+           transform=ax.transAxes,
+           bbox=dict(facecolor="salmon", alpha=0.5, boxstyle="round")
+           )
+
 
     # save figure as a pdf
     f1.savefig("../Results/LV_model_prac.pdf")
 
     # plot Consumer density against resource density
-    f2 = p.figure(figsize=(7, 6))
+    f2, ax = p.subplots()  # default number of subplots is 1
 
     p.plot(pops[:, 0], pops[:, 1], "-r")
     p.grid()
-    p.xlabel("Resource density\nr = %r, a = %r, z = %r, e = %r" % (r, a, z, e))
+    p.xlabel("Resource density")
     p.ylabel("Consumer density")
     p.title("Consumer-Resource population dynamics")
+
+    textstr = '\n'.join((
+        r'r=%.2f' % r,
+        r'a=%.2f' % a,
+        r'z=%.2f' % z,
+        r'e=%.2f' % e
+    ))
+
+    p.text(0.95, 0.95, textstr,
+           horizontalalignment="right",
+           verticalalignment="top",
+           transform=ax.transAxes,
+           bbox=dict(facecolor="salmon", alpha=0.5, boxstyle="round")
+           )
 
     f2.savefig("../Results/LV_model2_prac.pdf")
 
