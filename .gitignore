@@ -2,8 +2,13 @@
 *.tmp
 
 #Sandbox folder
-# */Sandbox/*
-# */Sandbox
+*/Sandbox/*
+
+#Results folder
+*/Results/*
+
+#Keep gitignore
+!.gitignore
 
 #Images
 *.png
