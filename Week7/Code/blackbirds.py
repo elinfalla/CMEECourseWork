@@ -1,3 +1,12 @@
+#!usr/bin/env python3
+
+"""Uses regular expressions to extract Kingdom, Phylum and Species names of blackbird species"""
+
+__appname__ = "Blackbirds.py"
+__author__ = 'Elin Falla (ef16@ic.ac.uk)'
+__version__ = '0.0.1'
+
+# Imports #
 import re
 
 # Read the file (using a different, more python 3 way, just for fun!)
@@ -5,8 +14,8 @@ with open('../Data/blackbirds.txt', 'r') as f:
     text = f.read()
 
 # replace \t's and \n's with a spaces:
-text = text.replace('\t',' ')
-text = text.replace('\n',' ')
+text = text.replace('\t', ' ')
+text = text.replace('\n', ' ')
 # You may want to make other changes to the text. 
 
 # In particular, note that there are "strange characters" (these are accents and

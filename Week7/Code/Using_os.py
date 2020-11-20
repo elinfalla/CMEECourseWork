@@ -1,6 +1,10 @@
-#!/usr/bin/env python3
+#!usr/bin/env python3
 
 """Find specific files in a directory using os.walk()"""
+
+__appname__ = "Using_os.py"
+__author__ = 'Elin Falla (ef16@ic.ac.uk)'
+__version__ = '0.0.1'
 
 # Use the subprocess.os module to get a list of files and directories 
 # in your ubuntu home directory 
@@ -8,7 +12,7 @@
 # Hint: look in subprocess.os and/or subprocess.os.path and/or 
 # subprocess.os.walk for helpful functions
 
-#packages
+# Imports #
 from subprocess import os
 
 #############

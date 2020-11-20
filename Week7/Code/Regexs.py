@@ -1,8 +1,12 @@
-#!/usr/bin/env python3
+#!usr/bin/env python3
 
 """Demonstrates some uses of re module for regex"""
 
-# packages
+__appname__ = "Regexs.py"
+__author__ = 'Elin Falla (ef16@ic.ac.uk)'
+__version__ = '0.0.1'
+
+# Imports #
 import re
 
 my_string = "a given string"

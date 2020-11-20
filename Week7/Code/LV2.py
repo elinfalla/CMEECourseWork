@@ -1,20 +1,24 @@
-#!/usr/bin/env python3
+#!usr/bin/env python3
 
 """Script that runs the Lotka-Volterra model with density dependence, taking parameter values from command line"""
 
-# packages
+__appname__ = "LV2.py"
+__author__ = 'Elin Falla (ef16@ic.ac.uk)'
+__version__ = '0.0.1'
+
+# Imports #
 import scipy as sc
 import scipy.integrate as integrate
 import matplotlib.pylab as p
 import sys
 
 
-# define a function that returns the growth rate of consumer and resource population
-# at a given time step
-
+# Functions #
 def main(argv):
-    """Main function"""
+    """Main function: define and run function containing LV model using inputs from command line, and plot results"""
 
+    # define a function that returns the growth rate of consumer and resource population
+    # at a given time step
     def dCR_dt(pops, t=0):
         """Returns the growth rate of consumer and resource population using the Lotka-Volterra model"""
 
@@ -24,7 +28,6 @@ def main(argv):
         dCdt = -z * C + e * a * R * C
 
         return sc.array([dRdt, dCdt])
-
 
     # assign parameter values
     K = 100

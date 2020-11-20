@@ -1,11 +1,12 @@
-#!/usr/bin/env python3
+#!usr/bin/env python3
 
 """Faster versions of Profileme.py functions - demonstrating use of profiling to test code speed."""
 
-# packages
+# Imports #
 # import numpy as np
 
 
+# Functions #
 def my_squares(iters):
     """Squares array of numbers from 1 to len(iters)"""
 

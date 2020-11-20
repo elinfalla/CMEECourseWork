@@ -1,16 +1,21 @@
-#!/usr/bin/env python3
+#!usr/bin/env python3
 
 """Script that runs the Lotka-Volterra model and plots 2 demonstrative graphs"""
 
-# packages
+__appname__ = "LV1.py"
+__author__ = 'Elin Falla (ef16@ic.ac.uk)'
+__version__ = '0.0.1'
+
+# Imports #
 import scipy as sc
 import scipy.integrate as integrate
 import matplotlib.pylab as p
 import sys
 
 
+# Functions #
 def main(argv):
-    """Main function"""
+    """Main function: define and run function containing LV model, and plot results"""
 
     # define a function that returns the growth rate of consumer and resource population
     # at a given time step

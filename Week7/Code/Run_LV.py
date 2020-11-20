@@ -1,11 +1,17 @@
-#!/usr/bin/env python3
+#!usr/bin/env python3
 
 """Runs LV1.py and LV2.py and profiles them"""
 
-# packages
+__appname__ = "Run_LV.py"
+__author__ = 'Elin Falla (ef16@ic.ac.uk)'
+__version__ = '0.0.1'
+
+# Imports #
+# Packages
 import cProfile
 import pstats
 
+# Scripts
 import LV2
 import LV1
 

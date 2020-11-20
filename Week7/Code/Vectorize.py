@@ -1,14 +1,20 @@
-#!/usr/bin/env python3
+#!usr/bin/env python3
 
-"""Demonstrates vectorisation using entrywise product of two arrays"""
+"""Demonstrates vectorisation using entry-wise product of two arrays"""
 
-# packages
+__appname__ = "Vectorize.py"
+__author__ = 'Elin Falla (ef16@ic.ac.uk)'
+__version__ = '0.0.1'
+
+# Imports #
 import scipy as sc
 import timeit
 import matplotlib.pylab as p
 
+
+# Functions #
 def loop_product(a, b):
-    """Entrywise product of a and b using for loop"""
+    """Entry-wise product of a and b using for loop"""
 
     N = len(a)
     c = sc.zeros(N)
@@ -17,8 +23,8 @@ def loop_product(a, b):
     return c
 
 
-def vect_product(a ,b):
-    """Entrywise product of a and b using for vectorisation"""
+def vect_product(a, b):
+    """Entry-wise product of a and b using vectorisation"""
 
     return sc.multiply(a, b)
 

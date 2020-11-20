@@ -1,7 +1,10 @@
-#!/usr/bin/env python3
+#!usr/bin/env python3
 
 """Compares speed of list comprehensions vs loops and loops vs join method for strings using timeit module"""
 
+__appname__ = "TestR.py"
+__author__ = 'Elin Falla (ef16@ic.ac.uk)'
+__version__ = '0.0.1'
 
 # Compare speed of list comprehensions to loops
 iters = 10000000

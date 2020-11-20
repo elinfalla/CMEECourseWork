@@ -1,7 +1,13 @@
-#!/usr/bin/env python3
+#!usr/bin/env python3
 
 """Functions demonstrating use of profiling to test code speed."""
 
+__appname__ = "Profileme.py"
+__author__ = 'Elin Falla (ef16@ic.ac.uk)'
+__version__ = '0.0.1'
+
+
+# Functions
 def my_squares(iters):
     """Squares array of numbers from 1 to len(iters)"""
 
