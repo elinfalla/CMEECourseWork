@@ -65,6 +65,7 @@
 #R
 .RData
 .Rhistory
+*.Rproj
 
 #Custom
 __pycache__
