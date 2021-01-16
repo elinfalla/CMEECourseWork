@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 # Author: Elin Falla - ef16@ic.ac.uk
 

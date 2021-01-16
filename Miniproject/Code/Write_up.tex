@@ -1,8 +1,58 @@
-\documentclass[12pt]{article}
+\documentclass[11pt]{article}
+
+\usepackage[margin=2cm]{geometry}
+
+\usepackage{setspace}
+\onehalfspacing
+
+\usepackage{lineno}
+\linenumbers
+
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{amsmath}
+
 
 \begin{document}
 
+\title{Title goes here: eg. model selection dependent on thermal response type and sample size}
+\author{Elin Falla\\Imperial College London
+\\ Word count: tbc}
+\date{}
+\maketitle
+\pagebreak
+
+\section*{Abstract}
+Abstract goes here
+\subsubsection*{Keywords:}
+model fitting, model selection, thermal response, photosynthesis, respiration
+\\
+
+\hrulefill
+
 \section{Introduction}
+
+\textbf{**WILL CONTAIN**}
+
+- Importance of temperature to changing rates of biological process, eg. growth, respiration, photosynthesis
+
+- Importance of modelling to depict biological processes and predict/explain patterns
+
+- Why modelling is important in the case of thermal response
+
+- Current models - no consensus, so many choices
+
+- Models chosen for this project and why
+
+- Selection criteria - different options and what's often used
+
+- This study: comparing selection criteria to see how it changes the outcome and comparing model selection for respiration versus photosynthesis rates - is the best model different?
+
+- aim isn't to find the optimal model for thermal response curves (only fitting 5) but to investigate the effects of non-biological factors such as the data quality (sample size, response curve shape) and chosen model selection criteria on the optimal model. 
+
+\textbf{**NOTES**}
+
 	- "models depict biological processes in simplified and general ways that provide insight into factors that are responsible for observed patterns" (johnson and omland 2004)
 	
 	- "Temperature is among the most important environmental factors that control plant development, growth and yield. All biological processes respond to temperature, and all responses can be summarized in terms of three cardinal temperatures, namely the base or minimum (Tmin), the optimum (Topt), and the maximum (Tmax) temperatures." (yan and hunt 1999)
@@ -11,17 +61,232 @@
 	- eg. "Climate has a profound effect on the distribution and abundance of invertebrates such as insects, and the mathematical description of the climatic influence on insect development has been of considerable interest among entomologists. " (damos 2012)
 	
 	- for temp range of photosynthesis see sage 2007
+	
+	Aims of study:
+	- to compare model fits across thermal performance curves
+	- to compare results of different indicators of fit
+	- to compare model fits for different types of thermal performance curves - respiration versus photosynthesis
+	
 \section{Materials and Methods}
-	- use AIC and BIC (And R sqaured) so can compare them
-	- briere: used reference to give estimation of starting value for $b_0$ (from briere et al 1999)
+	
+	\subsection{The data}
+	The data is a subset of the "BioTraits" database [source??], containing 903 thermal performance curves for either respiration or photosynthesis. Each thermal performance curve has an "ID" - a number from 1 to 903. The data is compiled from many sources so does not have consistent rate units, but all temperatures are in degrees Celcius.
+	
+	As the rate value is often in comparison to a reference rate, there were cases of negative values for the rate variable. For each ID containing at least one negative rate value, all values were shifted upwards so the smallest rate value was 0.
+	
+	\subsubsection*{Data classification}
+	The datasets were classified according to the type of response curve they produced when fitted by ordinary least squares regression to a quadratic function. The classifications were 'rising', 'falling', 'unimodal' and 'non-typical'. The latter was used for curves that didn't fall into the previous categories and/or had a fit with $R^2$ value $<$ 0.5. Figure~\ref{fig:curves} shows examples for each curve classification.
+	
+	\subsection{The models}
+	5 models were fitted to the data: 2 are linear and 3 are non-linear. All are phenomenological in nature but the non-linear models have biologically-relevant parameters whereas the linear models do not. 
+	
+	\subsubsection*{Linear models}	
+	The two linear models were the quadratic and cubic polynomial equations (Equations~\ref{eq:quad} and \ref{eq:cubic} respectively). In both cases $R$ represents the rate (of either respiration or photosynthesis depending on the dataset) and $T$ represents the temperature. The quadratic equation has 3 parameters ($a$, $b$ and $c$) and the cubic has 4 ($a$, $b$, $c$ and $d$), but as these models are purely phenomenological, in both cases these parameters hold no biological significance so further analysis based on the parameter values of the final fits are not possible.
+	
+	\begin{equation} \label{eq:quad}
+	R = a + bT + cT^2
+	\end{equation}
+	\begin{equation} \label{eq:cubic}
+	R = a + bT + cT^2 + dT^3
+	\end{equation}
+	
+	\subsubsection*{Non-linear models}
+	Three non-linear models were fitted to the data: two versions of the Briere model (REF) and the Yan and Hunt model (REF). All were created for the purpose of fitting a thermal response curve.
+	
+	The two Briere models are very similar. Both contain parameters $B_0$, $T_0$ and $T_m$. $B_0$ is a constant with no biological meaning, whereas $T_0$ and $T_m$ are the minimum and maximum temperatures at which the process (in this case photosynthesis and respiration can occur. At temperatures above $T_m$ and below $T_0$, the rate is 0.
+	
+	The difference between the models comes in the form of the presence or absence of a fourth parameter: $m$. In the version with this parameter, it is used instead of using a square root in the equation (equivalent to $m$ = 2). Going forward, the model without parameter $m$ (Equation~\ref{eq:briere}) will be referred to as the Briere-1 model, and the model with this parameter (Equation~\ref{eq:briere2}) will be referred to as Briere-2.
+	
+	
+	\begin{equation} \label{eq:briere}
+	R = \left\{
+			\begin{array}{ll}
+			0 & \quad T \leq T_0 \\
+            B_0 T (T-T_0) \sqrt{T_m - T} & \quad T_0 \leq T \leq T_m \\
+            0 & \quad T \geq T_m
+			\end{array}
+	\right.
+	\end{equation}
+	
+	\begin{equation} \label{eq:briere2}
+	R = \left\{
+			\begin{array}{ll}
+			0 & \quad T \leq T_0 \\
+            B_0 T (T-T_0) (T_m-T)^\frac{1}{m} & \quad T_0 \leq T \leq T_m \\
+            0 & \quad T \geq T_m
+			\end{array}
+	\right.
+	\end{equation}
+	\\
+	The final non-linear model is the Yan and Hunt model (REF) (Equation~\ref{eq:yanhunt}, which is another phenomenological model, this time with 4 parameters. $R_{max}$ is the maximum rate of respiration/photosynthesis, and $T_{opt}$ is the temperature at which this occurs. $T_{max}$ and $T_{min}$ are equivalent to $T_0$ and $T_m$ in the Briere-1 and Briere-2 models, and are the maximum and minimum temperature under which respiration/photosynthesis can occur. Like for the Briere models, the rate $R$ will be 0 when the temperature is larger than $T_{max}$ or smaller than $T_{min}$.
+	
+	\begin{equation} \label{eq:yanhunt}
+	R = R_{max} 
+		\left(
+			\frac{T_{max} - T}{T_{max} - T_{opt}}
+		\right) 
+		\left(
+			\frac{T - T_{min}}{T_{opt} - T_{min}}
+		\right)
+			^\frac{T_{opt} - T_{min}}{T_{max} - T_{opt}}
+	\end{equation}
 
+	\subsection{Model fitting and selection}
+	\subsubsection*{Computing tools}
+	All analyses were performed in R (version 3.4.2) using RStudio. R was used due to its many useful in-built functions and statistical packages. It also has superior data visualisation (ggplot2 package). I did not mix use of R and Python. This created coherency across my scripts, and allowed me to use functions and variables from one script in another without having to import them. To run all the scripts together, I used bash, due to its ease of use.
+	
+	\subsubsection*{Model fitting}
+	The quadratic and cubic models were fitted using ordinary least squares regression via the lm() function, with the fit points being produced by the predict.lm() function.
+	
+	The non-linear models were fit using non-linear least squares, which was performed using the nlsLM() function from the 'minpack.lm' package. This function uses the Levenberg-Marquardt type fitting algorithm. TO DO: SELECTION OF STARTING VALUES?
+	
+	\subsubsection*{Model selection}
+	A few model selection criteria were tested, in order to align with the aims of seeing how selection criteria affects model selection. Most simply, Akaike information criteria (AIC), small-sample unbiased AIC (AICc) and Bayesian information criteria (BIC) were performed on each model fit for each dataset (ID) and the number of times each model was selected by each criteria was compared. This will henceforth be referred to as the number of 'wins'. The AIC() and BIC() functions were used to calculate AIC and BIC, and the in-built calculations these functions perform are shown in Equations~\ref{eq:AIC} and \ref{eq:BIC} respectively. AICc is an adapted version of AIC used for small sample sizes, and was calculated manually, using Equation~\ref{eq:AICc}. In all these equations, $n$ refers to the sample size, $p$ to the number of free parameters in the model, and $RSS$ to the residual sums of squares of the model fit. 
+	POSSIBLE TO DO: TURN INTO A TABLE RATHER THAN SEPARATE EQUATIONS? - could show parameter (p) penalty for each explicitly
+	
+	\begin{equation} \label{eq:AIC}
+	AIC = n + 2 + n\ln
+		\left(
+			\frac{2\pi}{n}								\right) 
+	+ n\ln(RSS) + 2p
+	\end{equation}
+	
+	\begin{equation} \label{eq:BIC}
+	BIC = n + 2 + n\ln
+		\left(
+			\frac{2\pi}{n}								\right) 
+	+ n\ln(RSS) + p\ln(n)
+	\end{equation}
+	
+	\begin{equation} \label{eq:AICc}
+	AICc = n + 2 + n\ln
+		\left(
+			\frac{2\pi}{n}								\right) 
+	+ n\ln(RSS) + 2p 
+		\left(
+			\frac{n}{n - p - 1}
+		\right)
+	\end{equation}
+	\\
+	Then, Akaike Weights were calculated from both the AIC and the AICc values, to give a more concrete comparison of goodness of fit across the models. Weights provide the relative weight of evidence for each model for each dataset (Johnson + omland). Equation~\ref{eg:weights} shows how $W_i$, the weight of model $i$, was calculated from AIC for each dataset $y$, where $L(i | y)$ is the likelihood of model $i$ given the data $y$, and $R$ is the total number of models. The same equation was used to calculate Akaike weights from AICc, except with $AIC_i - AIC_{min}$ substituted for $AICc_i - AICc_{min}$. The distribution of Akaike weights for each model was used, with the mean acting as a proxy for the overall goodness of fit of a particular model to the datasets.
+	
+	\begin{align} \label{eg:weights}
+	W_i &= \frac{L(i | y)}{\sum_{j = i}^{R}L(j | y) }
+	& L(i | y) &= exp(-\frac{1}{2} (AIC_i - AIC_{min})) 
+	\end{align}
+	
 \section{Results}
-- shape of curves very different - many possibilities
-- some flat = temperature range not sufficient to see decline in rate??
-- only increasing/decreasing = again could be that temp range not sufficient - MAYBE DO SHCOFIELD UPPER AND LOWER EQUATIONS TO TEST THIS?
 
-- dataset 1, doesn't fit unless you brute force it, calculated value of b0 from equation suggests 0.6 but only value that fits (AIC = 24) is 80,000+
+\subsection{The optimal model according to the selection criteria}
+The optimal model for the data varied depending on the model selection criteria, but for all, a linear model had the best overall fit, both according to number of 'wins' and mean Akaike weight (in the case of AIC and AICc).
+
+\subsubsection*{The model with the most wins}
+Using both the AIC and BIC selection criteria, the cubic model had the most wins (Figure~\ref{fig:wins_plot}). However, using AICc the quadratic model had the most wins. The best non-linear model according to AIC and BIC was the Yan and Hunt model, whereas it was the Briere-1 model according to AICc.
+
+\subsubsection*{The model with the highest average Akaike weight}
+The mean Akaike weight for each model gave the same result as the number of wins for both AIC and AICc, except in the case of the Yan and Hunt and quadratic models under AIC (Figure~\ref{fig:weights}a and b). The quadratic model had more wins than Yan and Hunt, but a far lower mean Akaike weight. This suggests that quadratic model either wins or doesn't fit well, whereas the Yan and Hunt model is more consistently a good fit, even if it doesn't win. Across all models, for both AIC and AICc, the range of Akaike weights for each model was very large, showing the diversity of the datasets.
+
+\subsection{The effect of the curve classification}
+All models visually fit well on the expected thermal response curve, a negative parabola with a sharp decline at higher temperatures ('unimodal') (Figure~\ref{fig:curves}a). However, not all datasets took this shape, as shown by Figure~\ref{fig:curves}. Cases of 'rising' responses were very common (Figure~\ref{fig:curves}b), and there were also a few cases of 'falling' responses (Figure~\ref{fig:curves}c). This could be due to an insufficient range of temperatures being tested. However, there were also a significant number of datasets whose data did not fit the expected thermal response curve at all, classed as 'non-typical' (Figure~\ref{fig:curves}d).
+\\
+
+As the non-linear models have a far less flexible shape compared to the linear quadratic and cubic equations, they were much less likely to be able to fit non-typical response curves, and also often struggled on 'falling' curves, such as the Briere-1 model in Figure~\ref{fig:curves}c. This is evident, as the linear models (cubic and quadratic) won a far higher proportion of non-unimodal (falling, rising and non-typical) datasets than the non-linear models, especially for AIC and BIC (Figure~\ref{fig:wins_plot}). When comparing only unimodal response curves, the Yan and Hunt model had slightly more wins than quadratic under both AIC and BIC.
+
+
+\subsection{The effect of sample size}
+The result from AICc was very different to AIC and BIC, in terms of the optimal models chosen (Figures~\ref{fig:wins_plot} and \ref{fig:weights}). Under AICc, the quadratic and Briere-1 models had far more wins than the other models, and also were the only models with wins at very small sample sizes (5 - 6 data points) (Figure~\ref{fig:sample_size_line}a). This suggests that at these small sample sizes, the number of parameters of the model plays a very large part. The quadratic and Briere-1 models both have three parameters (Equations~\ref{eq:quad} and \ref{eq:briere} respectively), whereas all of the other models (Briere-2, cubic, Yan and Hunt) have four parameters. Therefore, the selection of the quadratic model under AICc has more to do with the large number of datasets with small sample sizes than it visually fitting the data points better. The other models were only able to win for datasets with more data points. AICc is a small-sample corrected version of AIC, with a focus on preventing over-fitting by penalising models with more parameters at smaller sample sizes, so this result makes sense.
+\\
+
+This is further corroborated by the fact that when datasets with the smallest sample sizes (5 - 10 data points) weren't considered, the mean Akaike weight by model according to AICc looked much more like the result for AIC (Figure~\ref{fig:weights}c and d). In this case the Yan and Hunt model and cubic appear on par as the optimal models, rather than the quadratic. 
+\\
+
+The optimal model selected by AIC is also affected by the elimination of small datasets: the mean Akaike weight of all the non-linear models increased, and the reverse is true of the linear models. This means the winning model changes from the cubic to Yan and Hunt model (although only by a very small margin) (Figure~\ref{fig:weights}a versus \ref{fig:weights}c). The AICc therefore isn't the only model selection criteria affected by sample size. The linear models were negatively affected as they have the highest proportion of wins at very small sample sizes (Figure~\ref{fig:sample_size_line}b). This can be partly explained by the fact that a high proportion of the responses classed as 'falling', which the non-linear models often didn't fit well, had very small sample sizes (Figure~\ref{fig:sample_size_per_curve}b). However, as there were very few response curves classed as falling (Figure~\ref{fig:sample_size_per_curve}a), this can't entirely explain the result. The proportion of rising and non-typical responses with small sample sizes don't differ from that of unimodal responses(Figure~\ref{fig:sample_size_per_curve}b). It's possible that these non-linear models just don't fit as well at small sample sizes as they do at larger sample sizes.
+
+\subsection{The optimal model for respiration versus photosynthesis}
+
+
+
+
+\subsection{**NOTES**}
+((Figure~\ref{fig:sample_size_box}a shows that this assumption is correct; the majority of datasets have very small sample sizes (under 20), with a few outliers with larger sample sizes of up to hundreds.
+The mean sample size of datasets where the quadratic or Briere models won is significantly lower than those datasets where the 4 parameter models won (Figure~\ref{fig:sample_size_box}b).)))
+
+
+\begin{figure} [H]
+	\includegraphics[width=\textwidth]{../Figures/Shapes_of_curves.pdf}
+	\caption{\label{fig:curves} Examples of the different curve classifications of the datasets with all models fitted to them. 'Rate' refers to the rate of either photosynthesis or respiration, units vary. (a) Unimodal, ID = 118 (b) Rising, ID = 22 (c) Falling, ID = 52 (d) Non-typical, ID = 99}
+\end{figure}
+
+\begin{figure} [H]
+	\centering
+	\includegraphics[width = \textwidth]{../Figures/Curve_type_wins.pdf}
+	\caption{\label{fig:wins_plot} Number of wins for each model under the three different selection criteria, split into wins per curve classification. Number of 'wins' refers to the number of datasets where a particular model was deemed the best fit by the model selection criteria. (a) AICc (b) AIC (c) BIC.}	
+\end{figure}
+
+\begin{figure} [H]
+	\includegraphics[width=\textwidth]{../Figures/Weights_boxplot.pdf}
+	\includegraphics[width=\textwidth]{../Figures/Weights_boxplot_SS.pdf}
+	\caption{\label{fig:weights} Boxplot showing distribution of Akaike weights across the datasets for each model using different selection criteria (a) AIC for all datasets (b) AICc for all datasets (c) AIC for datasets with sample size $>$ 10 (d) AICc for datasets with sample size $>$ 10}
+\end{figure}
+
+
+\begin{figure} [H]
+	\includegraphics[width=\textwidth]{../Figures/Sample_size_per_model.pdf}
+	\caption{\label{fig:sample_size_line} The proportion of all wins with each sample size (for sample size $<$ 30), for each model and selection criteria. 'Wins' refers to the number of datasets where a particular model was deemed the best fit by the model selection criteria. Line of best fit determined using local polynomial regression fitting (loess() function). (a) AICc (b) AIC (c) BIC}
+\end{figure}
+
+\begin{figure} [H]
+	\includegraphics[width=\textwidth]{../Figures/Sample_size_boxplot.pdf}
+	\caption{\label{fig:sample_size_box} Distribution of sample sizes for the datasets that each model had the best fit for (based on AICc). (a) Full range. (b) Sample size $<$ 60 }
+\end{figure}
+
+INSTEAD OF THIS: TABLE WITH MEAN AND MEDIAN SAMPLE SIZE PER MODEL? OR MAKE PLOT B A SUBPLOT ON LINE GRAPH? DO SAME FOR AIC AND BIC??
+\begin{figure} [H]
+	\includegraphics[width=\textwidth]{../Figures/Sample_size_per_curve.pdf}
+	\caption{\label{fig:sample_size_per_curve} Distribution of sample sizes across each curve classification. (a) Number of datasets per sample size per curve classification. (b) Datasets per sample size as a proportion of total datasets for each curve classification}
+\end{figure}
+
+
+
+
+
+
+
+%\begin{table} [H]
+%\centering
+%\begin{tabular}{l l l l}
+%	\hline
+%	Model & AIC & AICc & BIC \\
+%	\hline
+%	\\ [-7pt]
+%	Quadratic & 213 & 523 & 210 \\
+%	Cubic & 307 & 59 & 311 \\
+%	Briere-1 & 70 & 232 & 75 \\
+%	Briere-2 & 135 & 36 & 132 \\
+%	Yan and Hunt & 178 & 53 & 175 \\
+%	\hline
+%\end{tabular}
+%\caption{\label{table:wins}
+%Number of wins for each model using three different selection %criteria}
+%\end{table}
+
+
+
+
+
+\begin{figure} [H]
+	\includegraphics[width=\textwidth]{../Figures/Photo_resp_model_wins.pdf}
+	\caption{\label{fig:photo_resp_model} TODO}
+\end{figure}
+
+
 \section{Discussion}
+
+\textbf{**NOTES**}
+
+-AICc is closer to BIC? (omland paper) - look into
+
+- even though linear models win, still less valid as can't make any biological predictions
 
 - model selected ultimately depends on the models chosen for the candidate set so if you dont include a model that could best represent the process the could lead to misguided inference (=pitfall)(johnson and omland 2004)
 
@@ -35,5 +300,12 @@ Unlike the theory, models are constrained to a few components at a time, even if
 
 -briere model allows representation of asymmetry around optimum temperature (whereas quad and cubic dont??)
 -many models dont include minimum and maximum viable temperatures (t0 and tm) - briere does, schoolfield doesnt (see table 4, briere et al 1999)
+
+- NLLS assumptions
+	- NLLS-regression (/fitting) has all the assumptions of OLS-regression
+		- No measurement error in explanatory variable (only error in rsponse)
+		- Data have constant normal variance
+		- Obs error distribution is Gaussian
+What if errors are not normal? Use max likelihood or bayesian methods instead (not expected in mini project)
 
 \end{document}
