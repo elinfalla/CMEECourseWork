@@ -14,8 +14,8 @@ therm <- read.csv("../Data/PreparedThermRespData.csv", header = T, stringsAsFact
 
 #initiailise stats dataframe (for goodness of fit statistics)
 num_models <- 5 
-statsDF <- data.frame(matrix(NA, nrow = max(therm$ID) * num_models, ncol = 5))
-names(statsDF) <- c("ID", "Model", "AIC", "BIC", "R.squared")
+statsDF <- data.frame(matrix(NA, nrow = max(therm$ID) * num_models, ncol = 8))
+names(statsDF) <- c("ID", "Model", "AIC", "AICc", "BIC", "Response.var", "Response.group", "Curve.classification")
 
 #initialise model fits dataframe (for fit of models - to draw fit line on graph)
 temp_points_out <- 50
@@ -26,16 +26,34 @@ model_fitsDF <- data.frame(ID = NA * max(therm$ID) * rows_per_subset,
                            Model = NA * max(therm$ID) * rows_per_subset
                            )
 
+# number of parameters of each model
+num_param_quad <- 3
+num_param_cubic <- 4
+num_param_briere <- 3
+num_param_briere2 <- 4
+num_param_yan_hunt <- 4
+
+#initialise count for when AICc and AIC give different starting values
+AICc_AIC_diff <- vector()
+
+
+### AICc function ###
+AICc <- function(vals, p, n) {  # p = number of free parameters, n = sample size
+  RSS <- sum(residuals(vals)^2)
+  return(n + 2 + n * log((2 * pi) / n) + n * log(RSS) + (2 * p * (n / (n - p - 1))))
+}
+
+
 ###### BRIERE 1 MODEL FUNCTIONS ###### 
 
 # briere model
 briere <- function(t, t_0, t_m, b_0) {
   
-  return(b_0 * t * (t - t_0) * (abs(t_m - t)^(1/2)) * as.numeric(t<t_m) * as.numeric(t>t_0)) # add * t after b0
+  return(b_0 * t * (t - t_0) * (abs(t_m - t)^(1/2)) * as.numeric(t<t_m) * as.numeric(t>t_0))
         
 }
 
-# briere try function: tries to fit model using given start values. returns AIC if successful, else returns NA
+# briere try function: tries to fit model using given start values. returns AIC and AICc if successful, else returns NA
 briere_try_func <- function(subset, t_0_start, t_m_start, b_0_start) {
   out <- tryCatch(
     expr = {
@@ -57,8 +75,8 @@ briere_try_func <- function(subset, t_0_start, t_m_start, b_0_start) {
     }
   )
   if (all(!is.na(out))) {
-    AICc <- AIC(out) + (2 * 3 * (nrow(subset) / (nrow(subset) - 3 - 1)))
-    return(data.frame(AIC = AIC(out), AICc = AICc))
+    AICc <- AICc(out, num_param_briere, nrow(subset))
+    return(c(AIC(out), AICc))
   }
   else {
     return(out)
@@ -77,18 +95,23 @@ get_briere_start_vals <- function(subset, t_0_start, t_m_start, b_0_start, n_tes
   if (all(is.na(out))) {
     return(NA)
   }
-  AIC_vals <- lapply(out, function(x) if (all(!is.na(x))) x["AIC"])
-  AICc_vals <- lapply(out, function(x) if (all(!is.na(x))) x["AICc"])
+  
+  AIC_vals <- lapply(out, function(x) if (all(!is.na(x))) x[1] else x)
+  AICc_vals <- lapply(out, function(x) if (all(!is.na(x))) x[2] else x)
   
   lowest_AIC <- which.min(AIC_vals)
   lowest_AICc <- which.min(AICc_vals)
   
-  print(lowest_AIC)
-  print(lowest_AICc)
+  # print(lowest_AIC)
+  # print(lowest_AICc)
   
   if (lowest_AIC != lowest_AICc) {
-    print("lowest AIC:", AIC_vals[lowest_AIC])
-    print("lowest AICc:", AICc_vals[lowest_AICc])
+    print(paste("lowest AIC:", AIC_vals[lowest_AIC]))
+    print(paste("lowest AICc:", AICc_vals[lowest_AICc]))
+    
+    AICc_AIC_diff <- c(AICc_AIC_diff, unique(subset$ID))
+    
+    
     
   }
   
@@ -96,7 +119,7 @@ get_briere_start_vals <- function(subset, t_0_start, t_m_start, b_0_start, n_tes
   final_t_m_start <- t_m_start[lowest_AICc]
   final_b_0_start <- b_0_start[lowest_AICc]
   
-  return(c(out[lowest_AIC], 
+  return(c(out[lowest_AICc], 
            final_t_0_start, 
            final_t_m_start, 
            final_b_0_start))
@@ -111,7 +134,7 @@ briere2 <- function(t, t_0, t_m, b_0, m) {
   return(b_0 * t * (t - t_0) * (abs(t_m - t)^(1/m)) * as.numeric(t<t_m) * as.numeric(t>t_0))
 }
 
-# briere2 try function: tries to fit model using given start values. returns AIC if successful, else returns NA
+# briere2 try function: tries to fit model using given start values. returns AIC and AICc if successful, else returns NA
 briere2_try_func <- function(subset, t_0_start, t_m_start, b_0_start, m_start) {
   out <- tryCatch(
     expr = {
@@ -131,8 +154,10 @@ briere2_try_func <- function(subset, t_0_start, t_m_start, b_0_start, m_start) {
     }
   )
   if (all(!is.na(out))) {
-    return(AIC(out))
-  }
+    AICc <- AICc(out, num_param_briere2, nrow(subset))
+    return(c(AIC(out), AICc))  
+    }
+  
   else {
     return(out)
   }
@@ -151,14 +176,18 @@ get_briere2_start_vals <- function(subset, t_0_start, t_m_start, b_0_start, m_st
     return(NA)
   }
   
-  lowest_AIC <- which.min(out)
+  AIC_vals <- lapply(out, function(x) if (all(!is.na(x))) x[1] else x)
+  AICc_vals <- lapply(out, function(x) if (all(!is.na(x))) x[2] else x)
   
-  final_t_0_start <- t_0_start[lowest_AIC]
-  final_t_m_start <- t_m_start[lowest_AIC]
-  final_b_0_start <- b_0_start[lowest_AIC]
-  final_m_start <- m_start[lowest_AIC]
+  lowest_AIC <- which.min(AIC_vals)
+  lowest_AICc <- which.min(AICc_vals)
   
-  return(c(out[lowest_AIC], 
+  final_t_0_start <- t_0_start[lowest_AICc]
+  final_t_m_start <- t_m_start[lowest_AICc]
+  final_b_0_start <- b_0_start[lowest_AICc]
+  final_m_start <- m_start[lowest_AICc]
+  
+  return(c(out[lowest_AICc], 
            final_t_0_start, 
            final_t_m_start, 
            final_b_0_start,
@@ -194,8 +223,9 @@ yan_hunt_try_func <- function(subset, r_max_start, t_min_start, t_max_start, t_o
     }
   )
   if (all(!is.na(out))) {
-    return(AIC(out))
-  }
+    AICc <- AICc(out, num_param_yan_hunt, nrow(subset))
+    return(c(AIC(out), AICc))
+    }
   else {
     return(out)
   }
@@ -214,14 +244,18 @@ get_yan_hunt_start_vals <- function(subset, r_max_start, t_min_start, t_max_star
     return(NA)
   }
   
-  lowest_AIC <- which.min(out)
+  AIC_vals <- lapply(out, function(x) if (all(!is.na(x))) x[1] else x)
+  AICc_vals <- lapply(out, function(x) if (all(!is.na(x))) x[2] else x)
   
-  final_r_max_start <- r_max_start[lowest_AIC]
-  final_t_min_start <- t_min_start[lowest_AIC]
-  final_t_max_start <- t_max_start[lowest_AIC]
-  final_t_opt_start <- t_opt_start[lowest_AIC]
+  lowest_AIC <- which.min(AIC_vals)
+  lowest_AICc <- which.min(AICc_vals)
   
-  return(c(out[lowest_AIC], 
+  final_r_max_start <- r_max_start[lowest_AICc]
+  final_t_min_start <- t_min_start[lowest_AICc]
+  final_t_max_start <- t_max_start[lowest_AICc]
+  final_t_opt_start <- t_opt_start[lowest_AICc]
+  
+  return(c(out[lowest_AICc], 
            final_r_max_start, 
            final_t_min_start, 
            final_t_max_start,
@@ -233,15 +267,15 @@ get_yan_hunt_start_vals <- function(subset, r_max_start, t_min_start, t_max_star
 ### MODEL FITTING ###
 
 # set number of times to run start vals
-n_tests <- 10
+n_tests <- 100
 
 # initialise empty vector to hold IDs where no fit was possible
 no_fit_briere <- vector()
 no_fit_briere2 <- vector()
 no_fit_yan_hunt <- vector()
 
-#for (count in 1:max(therm$ID)) {
-for (count in 1:9) {
+for (count in 1:max(therm$ID)) {
+#for (count in 1:9) {
   subset <- therm[therm$ID == count,]
   
   #create temperature points vector for creating model fit lines
@@ -254,6 +288,7 @@ for (count in 1:9) {
   # fit cubic model
   fit_cubic <- lm(OriginalTraitValue ~ poly(ConTemp, 3), data = subset)
   cubic_points <- predict.lm(fit_cubic, data.frame(ConTemp = temp_points))
+  
   
   
   # runif is robust to negative values of contemp - if just divide then doesnt work for neg vals
@@ -280,9 +315,18 @@ for (count in 1:9) {
   b_0_mean <- mean(b_0_est)
   
   # create range around mean b0 to test values
-  b_0_scale <- 5
-  #b_0_range <- runif(n_tests, 1e-6, 1e+6)
-  b_0_range <- runif(n_tests, b_0_mean*(10^(-b_0_scale)), b_0_mean*(10^(b_0_scale)))
+  b_0_scale <- 3
+  #b_0_range <- runif(n_tests, b_0_mean, 1e+6)
+  b_0_range <- tryCatch(
+    runif(n_tests, b_0_mean/(10^(b_0_scale)), b_0_mean*(10^(b_0_scale))),
+    warning = function(warn) {
+      message("subset ID:", count)
+      message(runif(n_tests, b_0_mean/(10^(b_0_scale)), b_0_mean*(10^(b_0_scale))))
+      message(warn)
+      
+    }
+  )
+  #b_0_range <- runif(n_tests, b_0_mean/(10^(b_0_scale)), b_0_mean*(10^(b_0_scale)))
   #b_0_range <- rnorm(n_tests, b_0_mean, 10^(round(log10(abs(b_0_mean)))))
   
   briere_start_vals <- get_briere_start_vals(subset, t_0_range, t_m_range, b_0_range, n_tests)
@@ -290,6 +334,7 @@ for (count in 1:9) {
   if (all(is.na(briere_start_vals))) {
     no_fit_briere <- c(no_fit_briere, unique(subset$ID))
     briere_AIC <- NA
+    briere_AICc <- NA
     briere_BIC <- NA
     briere_points <- rep(NA, length(temp_points))
   }
@@ -306,11 +351,13 @@ for (count in 1:9) {
                         start = list(t_0 = t_0_start,
                                      t_m = t_m_start,
                                      b_0 = b_0_start),
-                        control = list(maxiter = 500),
-                        lower = c(-20, 0, 1e-7),
-                        upper = c(20, 100 , 1e+7))
+                        control = list(maxiter = 500)#,
+                        #lower = c(-20, 0, 1e-7),
+                        #upper = c(20, 100 , 1e+7)
+                        )
     
     briere_AIC <- AIC(fit_briere)
+    briere_AICc <- AICc(fit_briere, num_param_briere, nrow(subset))
     briere_BIC <- BIC(fit_briere)
     
     briere_points <- 
@@ -332,6 +379,7 @@ for (count in 1:9) {
     #UPDATE NO FIT TO INCLUDE MORE MODELS
     no_fit_briere2 <- c(no_fit_briere2, unique(subset$ID))
     briere2_AIC <- NA
+    briere2_AICc <- NA
     briere2_BIC <- NA
     briere2_points <- rep(NA, length(temp_points))
   }
@@ -353,6 +401,7 @@ for (count in 1:9) {
                         control = list(maxiter = 500))
     
     briere2_AIC <- AIC(fit_briere2)
+    briere2_AICc <- AICc(fit_briere2, num_param_briere2, nrow(subset))
     briere2_BIC <- BIC(fit_briere2)
     
     briere2_points <- 
@@ -387,6 +436,7 @@ for (count in 1:9) {
     #UPDATE NO FIT TO INCLUDE MORE MODELS
     no_fit_yan_hunt <- c(no_fit_yan_hunt, unique(subset$ID))
     yan_hunt_AIC <- NA
+    yan_hunt_AICc <- NA
     yan_hunt_BIC <- NA
     yan_hunt_points <- rep(NA, length(temp_points))
   }
@@ -408,6 +458,7 @@ for (count in 1:9) {
                          control = list(maxiter = 500))
 
     yan_hunt_AIC <- AIC(fit_yan_hunt)
+    yan_hunt_AICc <- AICc(fit_yan_hunt, num_param_yan_hunt, nrow(subset))
     yan_hunt_BIC <- BIC(fit_yan_hunt)
 
     yan_hunt_points <-
@@ -419,34 +470,39 @@ for (count in 1:9) {
       )
   }
   
+  # Determine whether data is from respiration or photosynthesis
+  if (is.na(unique(subset$StandardisedTraitName))) {
+    response_group <- "NA"
+  }
+  else if (unique(subset$StandardisedTraitName) == "respiration rate") {
+    response_group <- "Respiration"
+  }
+  else {
+    response_group <- "Photosynthesis"
+  }
   
-  statsDF[count*num_models,] <- c(count, "Quadratic", AIC(fit_quad), BIC(fit_quad), summary(fit_quad)$r.squared)
-  statsDF[count*num_models - 1,] <- c(count, "Cubic", AIC(fit_cubic), BIC(fit_cubic), summary(fit_cubic)$r.squared)
-  statsDF[count*num_models - 2,] <- c(count, "Briere", briere_AIC, briere_BIC, NA)
-  statsDF[count*num_models - 3,] <- c(count, "Briere2", briere2_AIC, briere2_BIC, NA)
-  statsDF[count*num_models - 4,] <- c(count, "Yan and Hunt", yan_hunt_AIC, yan_hunt_BIC, NA)
+  # fill statsDF for the subset
+  statsDF[count*num_models,] <- c(count, "Quadratic", AIC(fit_quad), AICc(fit_quad, num_param_quad, nrow(subset)), BIC(fit_quad), unique(subset$StandardisedTraitName), response_group, unique(subset$CurveClassification))
+  statsDF[count*num_models - 1,] <- c(count, "Cubic", AIC(fit_cubic), AICc(fit_cubic, num_param_cubic, nrow(subset)), BIC(fit_cubic), unique(subset$StandardisedTraitName), response_group, unique(subset$CurveClassification))
+  statsDF[count*num_models - 2,] <- c(count, "Briere", briere_AIC, briere_AICc, briere_BIC, unique(subset$StandardisedTraitName), response_group, unique(subset$CurveClassification))
+  statsDF[count*num_models - 3,] <- c(count, "Briere2", briere2_AIC, briere2_AICc, briere2_BIC, unique(subset$StandardisedTraitName), response_group, unique(subset$CurveClassification))
+  statsDF[count*num_models - 4,] <- c(count, "Yan and Hunt", yan_hunt_AIC, yan_hunt_AICc, yan_hunt_BIC, unique(subset$StandardisedTraitName), response_group, unique(subset$CurveClassification))
   
-
-  
-  print(count)
-  
-
-  
-  #TO DO: change to long format? points col and model col
   # fill in model_fitsDF for the subset
   model_fitsDF[(count*rows_per_subset-(rows_per_subset-1)):(count*rows_per_subset),] <- 
     c(
       rep(count, rows_per_subset), # ID
       rep(temp_points, num_models), # Temperatures
-      c(quad_points, cubic_points, briere_points, briere2_points, yan_hunt_points),
+      c(quad_points, cubic_points, briere_points, briere2_points, yan_hunt_points), # Trait points
       c(rep("Quadratic", temp_points_out), 
         rep("Cubic", temp_points_out), 
         rep("Briere", temp_points_out), 
         rep("Briere2", temp_points_out),
-        rep("Yan and Hunt", temp_points_out))
+        rep("Yan and Hunt", temp_points_out)) # Model
       )
-
   
+  # print counter to keep track of progress
+  print(count)
 }
 
 
