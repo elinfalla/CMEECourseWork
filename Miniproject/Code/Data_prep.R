@@ -29,4 +29,61 @@ newDF <-
   group_by(ID) %>%
   group_modify(~ rm_negatives(.x, "OriginalTraitValue"))
 
+
+###### CLASSIFY CURVE TYPES FOR EACH ID #######
+newDF$CurveClassification <- rep("NA", length(newDF$ID)) # NA as string so char type
+newDF$ConTemp2<- therm$ConTemp^2
+
+
+for (ID in 1:length(unique(newDF$ID))) {
+  
+  print(ID)
+  
+  # subset data to one ID
+  ID_subset <- newDF[newDF$ID == ID,]
+  
+  # fit quadratic curve to data (note: not using poly func)
+  fit_quad <- lm(OriginalTraitValue ~ ConTemp + ConTemp2, data = ID_subset)
+  
+  # calculate critical point (minimum/maximum) using formula x = -b/2a
+  crit_point <- -coef(fit_quad)[["ConTemp"]] / (2*coef(fit_quad)[["ConTemp2"]])
+  
+  min_temp <- min(ID_subset$ConTemp)
+  max_temp <- max(ID_subset$ConTemp)
+  
+  # IF BAD FIT
+  if (summary(fit_quad)["r.squared"] < 0.5) {
+    newDF[newDF$ID == ID, "CurveClassification"] <- "non-typical"
+  }
+  # IF CURVE IS CONCAVE
+  else if (coef(fit_quad)[["ConTemp2"]] < 0) {
+    
+    if (crit_point > min_temp & crit_point < max_temp) {
+      newDF[newDF$ID == ID, "CurveClassification"] <- "unimodal"
+    }
+    else if (crit_point > max_temp) {
+      newDF[newDF$ID == ID, "CurveClassification"] <- "rising"
+    }
+    else if (crit_point < min_temp) {
+      newDF[newDF$ID == ID, "CurveClassification"] <- "falling"
+    }
+  }
+  # IF CURVE IS CONVEX
+  else if (coef(fit_quad)[["ConTemp2"]] > 0) {
+    if (crit_point > max_temp) {
+      newDF[newDF$ID == ID, "CurveClassification"] <- "falling"
+    }
+    else if (crit_point < min_temp) {
+      newDF[newDF$ID == ID, "CurveClassification"] <- "rising"
+    }
+    else {
+      newDF[newDF$ID == ID, "CurveClassification"] <- "non-typical"
+    }
+  }
+  else {
+    newDF[newDF$ID == ID, "CurveClassification"] <- "non-typical"
+  }
+  
+}
+
 write.csv(newDF, "../Data/PreparedThermRespData.csv")
