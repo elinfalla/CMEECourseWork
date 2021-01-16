@@ -74,3 +74,4 @@ __pycache__
 *.log
 .idea
 *.tex.bak
+.Rproj.user
