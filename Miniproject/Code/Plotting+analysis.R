@@ -58,7 +58,7 @@ with_legend_plot <- ggplot(data = therm[therm$ID == IDs[1],], aes(x = ConTemp, y
 
 model_legend <- get_legend(with_legend_plot)
 
-pdf("../Figures/Shapes_of_curves.pdf", 11,7)
+pdf("../Figures/Shapes_of_curves.pdf", 9,7)
 
 # create all plots with no legends
 all_curve_plots <- lapply(1:length(IDs), function(i)
@@ -75,24 +75,29 @@ all_curve_plots <- lapply(1:length(IDs), function(i)
                  #theme_bw()
                  )
 
-lay <- rbind(c(1,1,2,2,3,3,4,4),
-             c(1,1,2,2,3,3,4,4),
-             c(5,5,6,6,7,7,8,8),
-             c(5,5,6,6,7,7,8,8),
-             c(9,9,9,9,9,9,9,9))
+# lay <- rbind(c(1,1,2,2,3,3,4,4),
+#              c(1,1,2,2,3,3,4,4),
+#              c(5,5,6,6,7,7,8,8),
+#              c(5,5,6,6,7,7,8,8),
+#              c(9,9,9,9,9,9,9,9))
 
+lay <- rbind(c(1,1,2,2),
+            c(3,3,4,4),
+            c(5,5,5,5))
+            
+            
 # arrange them with legend at the bottom
 gridExtra::grid.arrange(all_curve_plots[[1]], 
                         all_curve_plots[[2]], 
                         all_curve_plots[[3]],
                         all_curve_plots[[4]],
-                        all_curve_plots[[5]],
-                        all_curve_plots[[6]],
-                        all_curve_plots[[7]],
-                        all_curve_plots[[8]],
+                        #all_curve_plots[[5]],
+                        #all_curve_plots[[6]],
+                        #all_curve_plots[[7]],
+                        #all_curve_plots[[8]],
                         model_legend, 
                         layout_matrix = lay,
-                        heights = (c(2,2,2,2,0.7)))
+                        heights = (c(2.5,2.5,0.3)))
 
 dev.off()
 
@@ -495,8 +500,7 @@ AIC_response.var <-
   dplyr::count(Model, Response.group) %>%
   group_by(Response.group) %>%
   dplyr::mutate(Total = sum(n, na.rm = T)) %>%
-  dplyr::mutate(Proportion = n / Total) #%>%
-  #group_split(Response.group)
+  dplyr::mutate(Proportion = n / Total)
 
 AICc_response.var <- 
   statsDF[!is.na(statsDF$Response.group),] %>%
@@ -506,8 +510,7 @@ AICc_response.var <-
   dplyr::count(Model, Response.group) %>%
   group_by(Response.group) %>%
   dplyr::mutate(Total = sum(n, na.rm = T)) %>%
-  dplyr::mutate(Proportion = n / Total) #%>%
-  #group_split(Response.group)
+  dplyr::mutate(Proportion = n / Total) 
 
 BIC_response.var <-
   statsDF[!is.na(statsDF$Response.group),] %>%
@@ -517,12 +520,14 @@ BIC_response.var <-
   dplyr::count(Model, Response.group) %>%
   group_by(Response.group) %>%
   dplyr::mutate(Total = sum(n, na.rm = T)) %>%
-  dplyr::mutate(Proportion = n / Total) #%>%
-  #group_split(Response.group)
+  dplyr::mutate(Proportion = n / Total)
+
+
+# PLOT WINS FOR EACH MODEL AS A PROPORTION OF PHOTO AND RESP CURVES
 
 all_response_vars <- list(AICc_response.var, AIC_response.var, BIC_response.var)
 
-photo_resp_plots <- lapply(1:length(all_response_vars),
+photo_resp_prop_wins <- lapply(1:length(all_response_vars),
                            function(x) 
                              ggplot(data = all_response_vars[[x]],
                                     aes(x = Response.group, y = Proportion, fill = Model)) +
@@ -539,22 +544,69 @@ lay <- rbind(c(1,1,1),
              c(4,4,4))
 
 pdf("../Figures/Photo_resp_model_wins.pdf", 8, 10)
-gridExtra::grid.arrange(photo_resp_plots[[1]],
-                        photo_resp_plots[[2]],
-                        photo_resp_plots[[3]],
+gridExtra::grid.arrange(photo_resp_prop_wins[[1]],
+                        photo_resp_prop_wins[[2]],
+                        photo_resp_prop_wins[[3]],
                         model_legend,
                         layout_matrix = lay,
                         heights = c(2.5, 2.5, 2.5, 0.3))
 dev.off()
+
+## PLOT SAMPLE SIZE OF DATASETS FOR RESP VERSUS PHOTO CURVES
 
 AIC_wins$Response.group <- sapply(AIC_wins$ID, function(x) unique(statsDF[statsDF$ID == x, "Response.group"]))
 AIC_SS_per_response <-
   AIC_wins %>%
   group_by(Response.group) %>%
   dplyr::count(Sample.size)
+AIC_SS_per_response <- AIC_SS_per_response[!is.na(AIC_SS_per_response$Response.group),]
+
 
 response_counts <- AIC_wins %>% ungroup() %>% dplyr::count(Response.group)
 response_counts <- response_counts[!is.na(response_counts$Response.group),]
 
-AIC_SS_per_response$prop <- sapply(1:length(AIC_SS_per_response$n), function(x) as.numeric(AIC_SS_per_response[x, "n"] / response_counts[response_counts$Response.group == as.character(AIC_SS_per_response[x, "Response.group"]), "n"]))
+AIC_SS_per_response$prop <- sapply(1:length(AIC_SS_per_response$Response.group), function(x) as.numeric(AIC_SS_per_response[x, "n"] / response_counts[response_counts$Response.group == as.character(AIC_SS_per_response[x, "Response.group"]), "n"]))
 
+pdf("../Figures/Photo_resp_sample_size.pdf", 10, 5)
+#sample_size_per_response_plot <-
+  ggplot(data = AIC_SS_per_response[AIC_SS_per_response$Sample.size < 50,], aes(x = Sample.size, y = prop, col = Response.group)) +
+  geom_point(size = 1) +
+  geom_smooth(se = FALSE) + 
+  theme_bw() +
+  theme(legend.position = c(0.9,0.85), 
+        legend.title = element_blank(),
+        legend.key.size = unit(1, "cm"),
+        legend.text = element_text(size = 10)) +
+  scale_x_continuous("Sample size") +
+  scale_y_continuous("Proportion of datasets",
+                     limits = c(0,0.3),
+                     breaks = c(0.0, 0.1, 0.2, 0.3))
+dev.off()
+# PLOT CURVE TYPES FOR PHOTO AND RESP
+
+curve_types_per_responseDF <- 
+  AIC_wins[!is.na(AIC_wins$Response.group),] %>%
+  group_by(Response.group) %>%
+  dplyr::count(Curve.class)
+
+pdf("../Figures/Photo_resp_curve_type.pdf", 10, 6)
+#curve_type_per_response_plot <-
+  ggplot(data = curve_types_per_responseDF, aes(x = Response.group, y = n, fill = Curve.class)) +
+    geom_bar(position = "stack", stat = "identity") +
+    theme_bw() +
+    theme(legend.position = c(0.92,0.85),
+          legend.title = element_text(face = "bold"),
+          #legend.text = element_text(size = 10),
+          axis.text.x = element_text(size = 12)
+          ) +
+    xlab("") +
+    scale_y_continuous("Number of datasets", 
+                       limits = c(0,600),
+                       breaks = c(100,200,300,400,500,600),
+                       n.breaks = 5)
+dev.off()
+# gridExtra::grid.arrange(sample_size_per_response_plot,
+#                         curve_type_per_response_plot,
+#                         nrow = 2)
+  
+  
