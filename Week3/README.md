@@ -20,13 +20,17 @@ We covered:
   - Base R
   - Using qplot and ggplot
 
-**Language(s):** R - version 3.4.2
+**Language(s):** R (version 3.4.2), Python (version 3.6.3), Bash (version 3.2.57(1))
 
 **Dependencies:**
+**R:**
 - maps
 - tidyverse (in particular: tidyr, dplyr, ggplot2, purrr, tibble, readr)
 - ggthemes
 - reshape2
+
+**Python:**
+- pandas
 
 **Installation:**
 
@@ -40,6 +44,9 @@ Install from within R:
 - **reshape2**
   - `install.packages("reshape2")`
 
+Install from command line:
+- **pandas**
+  - `pip3 install pandas`
 
 ### Project structure
 
@@ -82,3 +89,12 @@ Install from within R:
 - **PP_Regress.R** - Script that creates ggplot plot using PredatorPrey data and saves regression results to csv file
 - **PlotLin.R** - Plots linear regression and demonstrates use of mathematical display
 - **Qplot.R** - Exercises demonstrating use of qplot()
+
+#### Groupwork
+- **Get_Treeheight.R** - Version of **TreeHeight.R** that takes a csv file from the command line, calculates the tree heights, and outputs them as a csv file
+- **Get_Treeheight.py** - Python version of **Get_Treeheight.R**
+- **PP_regress_loc.R** - Version of **PP_Regress.R** that groups the data by Location before outputting the regression results
+- **Run_get_Treeheight.sh** - Shell script that tests **Get_Treeheight.R** and **Get_Treeheight.py** with an example csv file
+- **Run_Vectorize.sh** - Shell script that runs **Vectorize1.R**, **Vectorize2.R**, **Vectorize1.py** and **Vectorize2.py** and compares their computational speeds
+- **Vectorize1.py** - Python version of **Vectorize1.R**
+- **Vectorize2.py** - Python version of **Vectorize2.R**
