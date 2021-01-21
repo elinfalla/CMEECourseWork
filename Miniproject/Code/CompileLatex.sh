@@ -28,7 +28,6 @@ pdflatex -halt-on-error -output-directory . -synctex=1 $1
 bibtex $(basename "$1" .tex)
 pdflatex -halt-on-error -output-directory . -synctex=1 $1
 pdflatex -halt-on-error -output-directory . -synctex=1 $1
-#options include: '-output-directory' and '-synctex=1'
 
 #Open pdf if file exists and isn't empty
 if [ -s $(basename "$1" .tex).pdf ];

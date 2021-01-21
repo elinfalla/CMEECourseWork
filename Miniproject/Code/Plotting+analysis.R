@@ -282,11 +282,23 @@ qplot(Model, Sample.size, data = AICc_wins[AICc_wins$Sample.size < 60, ], fill =
   scale_y_continuous("Sample size") +
   ggtitle(titles[2])
 
+
+
 gridExtra::grid.arrange(sample_size_full, sample_size_cropped, ncol = 2)
 
 
 dev.off()
+qplot(Model, Sample.size, data = AIC_wins[AIC_wins$Sample.size < 60, ], fill = Model, geom = "boxplot") +
+  theme_bw() +
+  theme(legend.position = "none", aspect.ratio = 1) +   
+  scale_y_continuous("Sample size") +
+  ggtitle(titles[2])
 
+qplot(Model, Sample.size, data = BIC_wins[BIC_wins$Sample.size < 60, ], fill = Model, geom = "boxplot") +
+  theme_bw() +
+  theme(legend.position = "none", aspect.ratio = 1) +   
+  scale_y_continuous("Sample size") +
+  ggtitle(titles[2])
 #### PLOT WINS BY CURVE TYPE ####
 
 AICc_wins$Curve.class <- sapply(AICc_wins$ID, function(x) unique(statsDF[statsDF$ID == x, "Curve.classification"]))
