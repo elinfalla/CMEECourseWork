@@ -62,7 +62,7 @@ def main(argv):
     p.xlabel("Time")
     p.ylabel("Population density")
     p.title("Consumer-Resource population dynamics")
-
+    # p.show()
     # save figure as a pdf
     f1.savefig("../Results/LV_model.pdf")
 
@@ -74,7 +74,7 @@ def main(argv):
     p.xlabel("Resource density")
     p.ylabel("Consumer density")
     p.title("Consumer-Resource population dynamics")
-
+    # p.show()
     f2.savefig("../Results/LV_model2.pdf")
 
     return 0
