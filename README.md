@@ -6,7 +6,6 @@ This repository contains all Coursework for the Imperial College London course "
 - Bash (version 3.2.57(1))
 - Python (version 3.6.3)
 - R (version 3.4.2)
-- C
 
 ### Dependencies:
 
@@ -16,11 +15,16 @@ This repository contains all Coursework for the Imperial College London course "
 
 **Python**
 - pandas
+- numpy
+- scipy
+- matplotlib
+- urllib3
 
 **R**
 - maps
 - tidyverse (in particular: tidyr, dplyr, ggplot2, purrr, tibble, readr)
 - ggthemes
+- reshape2
 
 ### Project structure
 

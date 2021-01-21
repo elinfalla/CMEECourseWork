@@ -75,6 +75,8 @@ __pycache__
 *.aux
 *.log
 .idea
-*.tex.bak
+*.bak
 *.fls
 *.fdb_latexmk
+*.bbl
+*.blg
