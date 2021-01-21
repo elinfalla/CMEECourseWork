@@ -19,7 +19,7 @@ taxa = [ 'Quercus robur',
 # Functions #
 def is_an_oak(name):
     """Finds just those taxa that are oak trees from a list of species"""
-    return name.lower().startswith('quercus ')
+    return name.lower().startswith('quercus')
 
 
 # Using for loops

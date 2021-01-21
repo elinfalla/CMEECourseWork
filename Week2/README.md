@@ -41,3 +41,8 @@ This week we covered:
 - **Test_control_flow.py** - Demonstrates the use of 'doctest' package
 - **Tuple.py** - Prints the output of a 'birds' dataset by species, showing latin name, common name and body mass
 - **Using_name.py** - Demonstrates how (\_\_name\_\_ == "\_\_main\_\_") works
+
+#### Groupwork
+- **Align_sequences_fasta.py** - Finds the best alignment of two DNA sequences (ie. the alignment with the most matched bases) from two inputted FASTA files. Writes the alignment and the number of matches to a csv file
+- **Align_sequences_better.py** - Finds the best alignment of two DNA sequences (ie. the alignment with the most matched bases) from two inputted FASTA files. If multiple best matches, it outputs all of them. Writes the alignment(s) and the number of matches to a csv file
+- **Oaks_debugme.py** - Imports genus and species data, and outputs those that are Oaks to JustOaksData.csv
