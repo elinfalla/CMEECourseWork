@@ -66,6 +66,7 @@
 .RData
 .Rhistory
 *.Rproj
+.Rproj.user
 
 #Custom
 __pycache__
@@ -75,4 +76,5 @@ __pycache__
 *.log
 .idea
 *.tex.bak
-.Rproj.user
+*.fls
+*.fdb_latexmk
