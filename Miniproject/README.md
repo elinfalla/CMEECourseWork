@@ -6,9 +6,9 @@ Write the following command in the terminal to run the whole project, including 
 
 `sh run_MiniProject.sh`
 
-###Language(s):
-**R** - version 3.4.2
-**Bash** - version 3.2.57(1)
+### Language(s):
+- **R** - version 3.4.2
+- **Bash** - version 3.2.57(1)
 
 ### Dependencies:
 #### R
