@@ -1,21 +1,27 @@
 #!/usr/bin/env R
 
-#packages
+# packages
 require(ggplot2)
-require(dplyr)
 require(plyr)
+require(dplyr)
 require(gridExtra)
 require(grid)
 
 rm(list = ls())
+options(warn=-1) # removed warnings - use warn=0 to turn back on
 
-#import datasets
+############################################
+########### PLOTTING + ANALYSIS ############
+############################################
+
+
+# import datasets
 therm <- read.csv("../Data/PreparedThermRespData.csv", header = T, stringsAsFactors = F)
 statsDF <- read.csv("../Data/StatsDF.csv", header = T, stringsAsFactors = F)
 model_fitsDF <- read.csv("../Data/Model_fitsDF.csv", header = T, stringsAsFactors = F)
-#no_fit <- read.csv("../Data/No_fit.csv", header = F, stringsAsFactors = F)
 
 
+### PRINT MODEL FITS FOR ALL DATASETS
 # pdf(paste("../Sandbox/fit_graph_S.pdf", sep = ""))
 # for (i in 1:max(therm$ID)) {
 # #for (i in 1:9) {
@@ -35,7 +41,7 @@ model_fitsDF <- read.csv("../Data/Model_fitsDF.csv", header = T, stringsAsFactor
 # }
 # dev.off()
 
-#function to extract and save a legend from a ggplot
+# function to extract and save a legend from a ggplot
 get_legend <- function(myggplot) {
   tmp <- ggplot_gtable(ggplot_build(myggplot))
   leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
@@ -44,8 +50,8 @@ get_legend <- function(myggplot) {
   return(legend)
 }
 
+### EXAMPLE CURVES PLOT ###
 
-#IDs <- c(118,22,52,7,53,456,99,323)
 IDs <- c(118, 22, 52, 99)
 titles <- c("a)", "b)", "c)", "d)", "e)", "f)", "g)", "h)")
 
@@ -58,7 +64,7 @@ with_legend_plot <- ggplot(data = therm[therm$ID == IDs[1],], aes(x = ConTemp, y
 
 model_legend <- get_legend(with_legend_plot)
 
-pdf("../Figures/Shapes_of_curves.pdf", 9,7)
+pdf("../Figures/Shapes_of_curves.pdf", 9, 5.5)
 
 # create all plots with no legends
 all_curve_plots <- lapply(1:length(IDs), function(i)
@@ -71,15 +77,7 @@ all_curve_plots <- lapply(1:length(IDs), function(i)
                  scale_x_continuous("Temperature (Celcius)") +
                  
                  ggtitle(titles[i]) +
-                 theme(legend.position = "none")# +
-                 #theme_bw()
-                 )
-
-# lay <- rbind(c(1,1,2,2,3,3,4,4),
-#              c(1,1,2,2,3,3,4,4),
-#              c(5,5,6,6,7,7,8,8),
-#              c(5,5,6,6,7,7,8,8),
-#              c(9,9,9,9,9,9,9,9))
+                 theme(legend.position = "none"))
 
 lay <- rbind(c(1,1,2,2),
             c(3,3,4,4),
@@ -91,10 +89,6 @@ gridExtra::grid.arrange(all_curve_plots[[1]],
                         all_curve_plots[[2]], 
                         all_curve_plots[[3]],
                         all_curve_plots[[4]],
-                        #all_curve_plots[[5]],
-                        #all_curve_plots[[6]],
-                        #all_curve_plots[[7]],
-                        #all_curve_plots[[8]],
                         model_legend, 
                         layout_matrix = lay,
                         heights = (c(2.5,2.5,0.3)))
@@ -142,28 +136,29 @@ BIC_result <-
   ungroup() %>%
   dplyr::count(Model)
 
-## BARCHART OF WINS FOR EACH MODEL UNDER EACH SELECTION CRITERIA
-all_wins_DF <- data.frame(
-  Model = rep(AIC_result$Model, 3),
-  Wins = c(AIC_result$n, AICc_result$n, BIC_result$n),
-  Method = c(rep("AIC", 5), rep("AICc", 5), rep("BIC", 5)))
+### BARCHART OF WINS FOR EACH MODEL UNDER EACH SELECTION CRITERIA - NOT IN REPORT
 
-all_wins_matrix = matrix(data = all_wins_DF$Wins, 
-                         ncol = 5, 
-                         nrow = 3, 
-                         byrow = T,
-                         dimnames = list(c("AIC", "AICc", "AICc"), AICc_result$Model))
-
-
+# all_wins_DF <- data.frame(
+#   Model = rep(AIC_result$Model, 3),
+#   Wins = c(AIC_result$n, AICc_result$n, BIC_result$n),
+#   Method = c(rep("AIC", 5), rep("AICc", 5), rep("BIC", 5)))
+# 
+# all_wins_matrix = matrix(data = all_wins_DF$Wins, 
+#                          ncol = 5, 
+#                          nrow = 3, 
+#                          byrow = T,
+#                          dimnames = list(c("AIC", "AICc", "AICc"), AICc_result$Model))
+# 
+# 
 # pdf("../Figures/Wins_barplot.pdf")  
-par(mfrow=c(1,1))
-barplot(all_wins_matrix,
-        col = c("green", "blue", "red"), 
-        legend = c("AIC", "AICc", "BIC"),
-        names.arg = AICc_result$Model,
-        beside = T,
-        xlab = "Model",
-        ylab = "Number of winssss")
+# par(mfrow=c(1,1))
+# barplot(all_wins_matrix,
+#         col = c("green", "blue", "red"), 
+#         legend = c("AIC", "AICc", "BIC"),
+#         names.arg = AICc_result$Model,
+#         beside = T,
+#         xlab = "Model",
+#         ylab = "Number of winssss")
 # dev.off()
 
 
@@ -235,76 +230,38 @@ gridExtra::grid.arrange(plots[[1]],
 
 dev.off()
 
+### BOXPLOT OF SAMPLE SIZES OF WINS FOR EACH MODEL FOR AICC - NOT IN REPORT
 
-
-
-# sample_sizeDF <- data.frame(Sample.size = NA * vector(length = length(therm$ID)),
-                            # Model = NA * vector(length = length(therm$ID)))
-# start_row <- 1
-# for (model in unique(AICc_wins$Model)) {
-#   print(model)
-#   ID_sample_sizes <- vector()
-#   IDs <- as.data.frame(AICc_wins[AICc_wins$Model == model, "ID"])
-#   
-#   for (ID in 1:nrow(IDs)) {
-#     ID_sample_sizes <- c(ID_sample_sizes, Sample.size[[IDs[ID,]]])
-#   }
-#   end_row <- start_row + length(ID_sample_sizes) - 1
-#   
-#   sample_sizeDF[start_row:end_row,] <- c(ID_sample_sizes, rep(model, length(ID_sample_sizes)))
-#   
-#   start_row <- end_row + 1
-#     
-#     
-#     
-#   print(ID_sample_sizes)
-#   print(paste("MEAN", model, "SAMPLE SIZE:", mean(ID_sample_sizes)))
-#   print(paste("MEDIAN", model, "SAMPLE SIZE:", median(ID_sample_sizes)))
-#   print("***************")
-# }
+# pdf("../Figures/Sample_size_boxplot.pdf", 11, 6)
 # 
+# sample_size_full <-
+#   qplot(Model, Sample.size, data = AICc_wins, fill = Model, geom = "boxplot") +
+#   theme_bw() +
+#   theme(legend.position = "none", aspect.ratio = 1) +   
+#   scale_y_continuous("Sample size") +
+#   ggtitle(titles[1])
+# 
+# sample_size_cropped <-
+# qplot(Model, Sample.size, data = AICc_wins[AICc_wins$Sample.size < 60, ], fill = Model, geom = "boxplot") +
+#   theme_bw() +
+#   theme(legend.position = "none", aspect.ratio = 1) +   
+#   scale_y_continuous("Sample size") +
+#   ggtitle(titles[2])
+# 
+# gridExtra::grid.arrange(sample_size_full, sample_size_cropped, ncol = 2)
+# 
+# dev.off()
 
 
 
-pdf("../Figures/Sample_size_boxplot.pdf", 11, 6)
-
-sample_size_full <-
-  qplot(Model, Sample.size, data = AICc_wins, fill = Model, geom = "boxplot") +
-  theme_bw() +
-  theme(legend.position = "none", aspect.ratio = 1) +   
-  scale_y_continuous("Sample size") +
-  ggtitle(titles[1])
-
-sample_size_cropped <-
-qplot(Model, Sample.size, data = AICc_wins[AICc_wins$Sample.size < 60, ], fill = Model, geom = "boxplot") +
-  theme_bw() +
-  theme(legend.position = "none", aspect.ratio = 1) +   
-  scale_y_continuous("Sample size") +
-  ggtitle(titles[2])
-
-
-
-gridExtra::grid.arrange(sample_size_full, sample_size_cropped, ncol = 2)
-
-
-dev.off()
-qplot(Model, Sample.size, data = AIC_wins[AIC_wins$Sample.size < 60, ], fill = Model, geom = "boxplot") +
-  theme_bw() +
-  theme(legend.position = "none", aspect.ratio = 1) +   
-  scale_y_continuous("Sample size") +
-  ggtitle(titles[2])
-
-qplot(Model, Sample.size, data = BIC_wins[BIC_wins$Sample.size < 60, ], fill = Model, geom = "boxplot") +
-  theme_bw() +
-  theme(legend.position = "none", aspect.ratio = 1) +   
-  scale_y_continuous("Sample size") +
-  ggtitle(titles[2])
 #### PLOT WINS BY CURVE TYPE ####
 
+# new column - curve type of each ID
 AICc_wins$Curve.class <- sapply(AICc_wins$ID, function(x) unique(statsDF[statsDF$ID == x, "Curve.classification"]))
 AIC_wins$Curve.class <- sapply(AIC_wins$ID, function(x) unique(statsDF[statsDF$ID == x, "Curve.classification"]))
 BIC_wins$Curve.class <- sapply(AIC_wins$ID, function(x) unique(statsDF[statsDF$ID == x, "Curve.classification"]))
 
+# count of curve types of wins for each model (for AIC, AICc, BIC)
 AICc_curve_wins <-
   AICc_wins %>%
     group_by(Model) %>%
@@ -320,25 +277,37 @@ BIC_curve_wins <-
   group_by(Model) %>%
   dplyr::count(Curve.class)
 
+# create plot with legend so can extract it
 with_legend_plot <- ggplot(data = BIC_curve_wins, aes(x = Model, y = n, fill = Curve.class)) +
   geom_bar(position = "stack", stat = "identity") +
   theme(legend.position = "bottom",
         legend.title = element_text(face = "bold")) 
 
+# extract legend
 curve_legend <- get_legend(with_legend_plot)
 
 curveDFs <- list(AICc_curve_wins, AIC_curve_wins, BIC_curve_wins)
+win_resultsDFs <- list(AICc_result, AIC_result, BIC_result)
 
+# create bar labels - as want 1 bar label per bar not 1 per curve type per bar, need 3 empty labels between labels
+bar_labels <- lapply(1:length(win_resultsDFs),
+                     function (i)
+                       sapply(1:length(AIC_result$n),
+                              function (x)
+                                c(rep("", 3), as.character(win_resultsDFs[[i]][x, "n"]))))
+
+# create plot
 pdf("../Figures/Curve_type_wins.pdf", 8, 10)
 
 curve_plots <- lapply(1:length(curveDFs), function(x) 
   ggplot(data = curveDFs[[x]], aes(x = Model, y = n, fill = Curve.class)) +
     geom_bar(position = "stack", stat = "identity") +
+    geom_text(aes(label = as.vector(bar_labels[[x]]), vjust = -8.2), color = "blue") +
     theme_bw() +
     ggtitle(paste(titles[x], selection_methods[x])) +
     theme(legend.position = "none") +
     scale_y_continuous("Number of wins", 
-                       limits = c(0,530),
+                       limits = c(0,570),
                        breaks = c(100,200,300,400,500),
                        n.breaks = 5)) 
 
@@ -353,6 +322,7 @@ gridExtra::grid.arrange(curve_plots[[1]],
                         curve_legend,
                         layout_matrix = lay,
                         heights = c(2.5, 2.5, 2.5, 0.3))
+
 dev.off()
 
 
@@ -366,9 +336,11 @@ AIC_SS_per_curve_class <-
 
 curve_counts <- AICc_wins %>% ungroup() %>% dplyr::count(Curve.class)
 
+# create proporation column
 AIC_SS_per_curve_class$Prop <- sapply(1:length(AIC_SS_per_curve_class$Curve.class),
                                       function(x) as.numeric(AIC_SS_per_curve_class[x, "n"] / curve_counts[curve_counts$Curve.class == as.character(AIC_SS_per_curve_class[x, "Curve.class"]), "n"]))
 
+# create plot
 pdf("../Figures/Sample_size_per_curve.pdf")
 
 SS_curve_number <- 
@@ -403,8 +375,6 @@ gridExtra::grid.arrange(SS_curve_number,
                         heights = c(2.5, 2.5, 0.3))
                         
 dev.off()
-
-# relationship between weight and sample size?
 
 ### CALCULATE AKAIKE WEIGHTS ###  
 
@@ -449,19 +419,7 @@ AIC_weights_average <-
   group_map(~ mean(.$AIC.weight, na.rm = T)) %>%
   setNames(unique(sort(AIC_weights$Model)))
 
-
-head(AICc_weights)
-AICc_weights_average
-head(AIC_weights)
-AIC_weights_average
-
-
-# hist(AICc_weights$AICc.weight)
-# hist(AIC_weights$AIC.weight)
-# boxplot(AICc.weight~Model, data = AICc_weights[!is.na(AICc_weights$AICc.weight),])
-# boxplot(AIC.weight~Model, data = AIC_weights[!is.na(AIC_weights$AIC.weight),])
-
-
+# create plot
 pdf("../Figures/Weights_boxplot.pdf", 10, 6)
 
 AIC_weights_boxplot <- 
@@ -481,6 +439,9 @@ AICc_weights_boxplot <-
 gridExtra::grid.arrange(AIC_weights_boxplot, AICc_weights_boxplot, ncol = 2)
 
 dev.off()
+
+
+### SAME PLOT BUT WITH ONLY SAMPLE SIZES > 10
 
 pdf("../Figures/Weights_boxplot_SS.pdf", 10, 6)
 
@@ -502,8 +463,10 @@ gridExtra::grid.arrange(AIC_weights_boxplot_ss, AICc_weights_boxplot_ss, ncol = 
 
 dev.off()
 
+
 #### IS MODEL CHOICE DIFFERENT FOR RESPIRATION VERUS PHOTOSYNTHESIS?
 
+# find total number of wins of each model for respiration vs photosynthesis (for AIC, BIC, AICc)
 AIC_response.var <- 
   statsDF[!is.na(statsDF$Response.group),] %>%
   group_by(ID, Response.group) %>%
@@ -564,23 +527,26 @@ gridExtra::grid.arrange(photo_resp_prop_wins[[1]],
                         heights = c(2.5, 2.5, 2.5, 0.3))
 dev.off()
 
+
 ## PLOT SAMPLE SIZE OF DATASETS FOR RESP VERSUS PHOTO CURVES
 
 AIC_wins$Response.group <- sapply(AIC_wins$ID, function(x) unique(statsDF[statsDF$ID == x, "Response.group"]))
+
 AIC_SS_per_response <-
   AIC_wins %>%
   group_by(Response.group) %>%
   dplyr::count(Sample.size)
 AIC_SS_per_response <- AIC_SS_per_response[!is.na(AIC_SS_per_response$Response.group),]
 
-
+# find total number of photosynthesis and respiration curves (to create proportions)
 response_counts <- AIC_wins %>% ungroup() %>% dplyr::count(Response.group)
 response_counts <- response_counts[!is.na(response_counts$Response.group),]
 
+# create proportion column 
 AIC_SS_per_response$prop <- sapply(1:length(AIC_SS_per_response$Response.group), function(x) as.numeric(AIC_SS_per_response[x, "n"] / response_counts[response_counts$Response.group == as.character(AIC_SS_per_response[x, "Response.group"]), "n"]))
 
 pdf("../Figures/Photo_resp_sample_size.pdf", 10, 5)
-#sample_size_per_response_plot <-
+
   ggplot(data = AIC_SS_per_response[AIC_SS_per_response$Sample.size < 50,], aes(x = Sample.size, y = prop, col = Response.group)) +
   geom_point(size = 1) +
   geom_smooth(se = FALSE) + 
@@ -594,6 +560,8 @@ pdf("../Figures/Photo_resp_sample_size.pdf", 10, 5)
                      limits = c(0,0.3),
                      breaks = c(0.0, 0.1, 0.2, 0.3))
 dev.off()
+
+
 # PLOT CURVE TYPES FOR PHOTO AND RESP
 
 curve_types_per_responseDF <- 
@@ -602,7 +570,6 @@ curve_types_per_responseDF <-
   dplyr::count(Curve.class)
 
 pdf("../Figures/Photo_resp_curve_type.pdf", 10, 6)
-#curve_type_per_response_plot <-
   ggplot(data = curve_types_per_responseDF, aes(x = Response.group, y = n, fill = Curve.class)) +
     geom_bar(position = "stack", stat = "identity") +
     theme_bw() +
@@ -617,8 +584,4 @@ pdf("../Figures/Photo_resp_curve_type.pdf", 10, 6)
                        breaks = c(100,200,300,400,500,600),
                        n.breaks = 5)
 dev.off()
-# gridExtra::grid.arrange(sample_size_per_response_plot,
-#                         curve_type_per_response_plot,
-#                         nrow = 2)
-  
-  
+

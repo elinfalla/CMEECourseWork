@@ -12,34 +12,45 @@
 \usepackage{subcaption}
 \usepackage{float}
 \usepackage{amsmath}
+\usepackage[labelfont=bf]{caption}
 
+% command to create supplementary figures
+\newcommand{\beginsupplement}{
+        \setcounter{table}{0}
+        \renewcommand{\thetable}{S\arabic{table}}%
+        \setcounter{figure}{0}
+        \renewcommand{\thefigure}{S\arabic{figure}}%
+     }
+
+% command to get word count from Write_up.sum
+\newcommand{\wordcount}{
+	\input{Write_up.sum}
+	}
 
 \begin{document}
 %\setlength{\parindent}{0pt} % sets indent to 0
 \setlength{\parskip}{6pt}
 
-\title{Title goes here: eg. model selection dependent on thermal response type and sample size}
+\title{The importance of analysis design when fitting mathematical models to thermal response curves}
 \author{Elin Falla\\Imperial College London
-\\ Word count: tbc}
+\\ Word count: \wordcount}
 \date{}
 \maketitle
 \pagebreak
 
 \section*{Abstract}
-\paragraph{Abstract goes here. look its all bold and fun}
-\subsubsection*{Keywords:}
-model fitting, model selection, thermal response, photosynthesis, respiration
+\textbf{With the onset of climate change, it is more important than ever that we understand species' responses to temperature changes. Fitting mathematical models to thermal response curves (TRCs) is a popular method for analysing and predicting the response of individual species/processes to a warming climate. This study shows the importance of careful analysis design in these cases, as non-biological factors can drastically influence the conclusions drawn from model fitting. I fit linear and non-linear models from the literature to 903 TRCs and analysed them using different model selection criteria, as well as analysing the effect of sample size and data quality on the results. I found that use of AIC$_c$ rather than AIC or BIC drastically changes the optimal model, due to the large number of small datasets. The optimal model is also affected by the shapes of TRCs considered: the non-linear models performed best on unimodal datasets. Overall, this study shows the importance of exploring your data and the models you fit, in order to design an impactful analysis that produces accurate predictions.}
 
 \hrulefill
 
 \section{Introduction}
-Temperature is among the most important environmental factors, as all biological processes respond to change in temperature \cite{yanEquationModellingTemperature1999}. There are plentiful studies on the effects of temperature on different biological processes \cite{adamsModelFitBiological2017, krenekThermalPerformanceCurves2011, damosTemperatureDrivenModelsInsect2011} CITE MODELLING BAC GROWTH HERE, as well as meta-analyses across ecological and physiological traits \cite{dellSystematicVariationTemperature2011}, and for good reason. Climate change is changing the thermal landscape \cite{pachauriClimateChange20072008} and understanding species' responses is critical to mitigating its effects.
+Temperature is among the most important environmental factors, as all biological processes respond to it \cite{yanEquationModellingTemperature1999}. There are plentiful studies on the effects of temperature on different biological processes \cite{adamsModelFitBiological2017, krenekThermalPerformanceCurves2011, damosTemperatureDrivenModelsInsect2011, zwieteringModelingBacterialGrowth1991}, as well as meta-analyses across ecological and physiological traits \cite{dellSystematicVariationTemperature2011}, and for good reason. Climate change is changing the thermal landscape \cite{pachauriClimateChange20072008} and understanding species' responses is critical to mitigating its effects.
 
-Among these important processes are respiration and photosynthesis; there are many studies on the effects of temperature on the rates of these two key processes \cite{MarineMesoherbivoreConsumption2016, sageTemperatureResponseC32007}. For single species analysis, thermal response curves (TRC) are often used, that measure trait values (eg. net photosynthesis rate) across a range of temperature values \cite{dellSystematicVariationTemperature2011}. A large variety of mathematical models, both phenomenological and mechanistic, have been proposed to fit TRCs. Such models aim to "depict biological processes in simplified and general ways that provide insight into factors that are responsible for observed patterns" \cite{johnsonModelSelectionEcology2004}.
+Among these important processes are respiration and photosynthesis; there are many studies on their responses to temperature \cite{gutowMarineMesoherbivoreConsumption2016, sageTemperatureResponseC32007, caronEffectTemperatureGrowth1986, wittmannTemperatureDependencyBark2007, hanckeTemperatureEffectsMicroalgal2008}. For single species analysis, thermal response curves (TRCs) are often used, that measure trait values across a range of temperature values \cite{dellSystematicVariationTemperature2011}. A large variety of mathematical models, both phenomenological and mechanistic, have been proposed to fit TRCs. Such models aim to "depict biological processes in simplified and general ways that provide insight into factors that are responsible for observed patterns" \cite{johnsonModelSelectionEcology2004}.
 
-In recent years, model selection methods have gained traction, in which competing models are simultaneously confronted with data in order to determine the best one  \cite{johnsonModelSelectionEcology2004}. There are many model selection criteria, each with their own set of assumptions. However, there can be confusion around which set of criteria are best, and in addition model selection is often affected by non-biological factors, such as sample size and aspects of data quality \cite{ModelSelectionMultimodel}.
+In recent years, model selection methods have gained traction as a way to assess model fit, in which competing models are simultaneously confronted with data in order to determine the best one  \cite{johnsonModelSelectionEcology2004}. There are many model selection criteria, each with their own set of assumptions. However, there can be confusion around which set of criteria are best, and in addition model selection is often affected by non-biological factors, such as sample size and aspects of data quality \cite{burnhamModelSelectionMultimodel2002}.
 
-As climate change is such a pressing issue, it is critical that the predictions made from TRCs are as accurate as possible, and that the optimal models are chosen correctly. The aim of my study is to vary non-biological factors when fitting models to respiration and photosynthesis TRCs, in order to assess the effects that it can have on which model is considered optimal, and hence the conclusions drawn. I will vary the selection criteria used, as well as analysing the effects of sample size and data quality and type. I will also compare the photosynthesis and respiration TRCs, to see if and how non-biologial differences in their data can affect the best model for each response type.
+As climate change is such a pressing issue, it is critical that the predictions made from TRCs are as accurate as possible, and that the optimal models are chosen correctly. The aim of my study is to vary analysis design when fitting models to respiration and photosynthesis TRCs, in order to assess the effects that it can have on which model is considered optimal, and hence the conclusions drawn. I will vary the selection criteria used, as well as analysing the effects of sample size and data quality and type. I will also compare the photosynthesis and respiration TRCs, to see if and how non-biological differences in their data can affect the best model for each response type.
 
 
 
@@ -61,18 +72,17 @@ As climate change is such a pressing issue, it is critical that the predictions 
 \section{Materials and Methods}
 	
 	\subsection{The data}
-	The data is a subset of the "BioTraits" database [source??], containing 903 TRCs (referred to as 'datasets') for either respiration or photosynthesis rates. The data is compiled from many sources so does not have consistent rate units, but all temperatures are in degrees Celcius.
+	The data is a subset of the "BioTraits" database, containing 903 TRCs (referred to as 'datasets') for respiration and photosynthesis. The data is compiled from many sources so does not have consistent rate units, but all temperatures are in degrees Celcius.
 
 %	As the rate value is often in comparison to a reference rate, there were cases of negative values for the rate variable. For each ID containing at least one negative rate value, all values were shifted upwards so the smallest rate value was 0.
 	
-	\subsubsection*{Data classification}
-	The datasets were classified according to the type of response curve they produced when fitted by ordinary least squares regression to a quadratic function. The classifications were 'rising', 'falling', 'unimodal' and 'non-typical'. The latter was used for curves that didn't fall into the previous categories and/or had a fit with $R^2$ value $<$ 0.5. Figure~\ref{fig:curves} shows examples for each curve classification.
+	I classified the datasets according to the type of response curve they produced when fitted by ordinary least squares (OLS) regression to a quadratic function. The classifications were 'rising', 'falling', 'unimodal' and 'non-typical'. The latter was used for curves that didn't fall into the previous categories and/or had a fit with $R^2$ value $<$ 0.5. Figure~\ref{fig:curves} shows examples for each curve classification.
 	
 	\subsection{The models}
-	5 models were fitted to the data: 2 linear and 3 non-linear. All are phenomenological in nature but the non-linear models have biologically-relevant parameters whereas the linear models do not. 
+	5 models were fitted to the data: 2 linear and 3 non-linear. All are phenomenological in nature but the non-linear models have biologically-relevant parameters whereas the linear do not. 
 	
 	\subsubsection*{Linear models}	
-	The two linear models were the quadratic and cubic polynomial equations (Equations~\ref{eq:quad} and \ref{eq:cubic}). In both cases $R$ represents the rate (of either respiration or photosynthesis depending on the dataset) and $T$ represents the temperature. The quadratic equation has 3 parameters ($a$, $b$ and $c$) and the cubic has 4 ($a$, $b$, $c$ and $d$), but as these models are purely phenomenological, in both cases these parameters hold no biological significance so further analysis based on the parameter values of the final fits are not possible.
+	The two linear models were the quadratic and cubic polynomial equations (Equations~\ref{eq:quad} and \ref{eq:cubic}). In both cases $R$ represents the rate (of respiration or photosynthesis) and $T$ represents the temperature. The quadratic equation has 3 parameters ($a$, $b$ and $c$) and the cubic has 4 ($a$, $b$, $c$ and $d$), but as these models are purely phenomenological, in both cases these parameters hold no biological significance.
 	
 	\begin{equation} \label{eq:quad}
 	R = a + bT + cT^2
@@ -82,13 +92,10 @@ As climate change is such a pressing issue, it is critical that the predictions 
 	\end{equation}
 	
 	\subsubsection*{Non-linear models}
-	Three non-linear models were fitted to the data: two versions of the Briere model (REF) and the Yan and Hunt model (REF). All were created for the purpose of fitting a thermal response curve.
+	Three non-linear models were fitted to the data: two versions of the Briere model \cite{briereNovelRateModel1999}, and the Yan and Hunt model \cite{yanEquationModellingTemperature1999}.
 	
-	The two Briere models are very similar. Both contain parameters $B_0$, $T_0$ and $T_m$. $B_0$ is a constant with no biological meaning, whereas $T_0$ and $T_m$ are the minimum and maximum temperatures at which the process (in this case photosynthesis and respiration can occur. At temperatures above $T_m$ and below $T_0$, the rate is 0.
-
-	The difference between the models comes in the form of the presence or absence of a fourth parameter: $m$. In the version with this parameter, it is used instead of using a square root in the equation (equivalent to $m$ = 2). Going forward, the model without parameter $m$ (Equation~\ref{eq:briere}) will be referred to as the Briere-1 model, and the model with this parameter (Equation~\ref{eq:briere2}) will be referred to as Briere-2.
-	
-	
+	The two Briere models are very similar. Briere-1 contains parameters $B_0$, $T_0$ and $T_m$. $B_0$ is a constant with no biological meaning, whereas $T_0$ and $T_m$ are the minimum and maximum temperatures at which the process (photosynthesis or respiration) can occur. At temperatures above $T_m$ and below $T_0$, the rate is 0. Briere-2 is the same, except it has an extra parameter $m$ that lends more flexibility. (In Briere-1, $m = 2$.)
+		
 	\begin{equation} \label{eq:briere}
 	R = \left\{
 			\begin{array}{ll}
@@ -109,7 +116,7 @@ As climate change is such a pressing issue, it is critical that the predictions 
 	\right.
 	\end{equation}
 
-	The final non-linear model is the Yan and Hunt model (REF) (Equation~\ref{eq:yanhunt}, which is another phenomenological model, this time with 4 parameters. $R_{max}$ is the maximum rate of respiration/photosynthesis, and $T_{opt}$ is the temperature at which this occurs. $T_{max}$ and $T_{min}$ are equivalent to $T_0$ and $T_m$ in the Briere-1 and Briere-2 models, and are the maximum and minimum temperature under which respiration/photosynthesis can occur. Like for the Briere models, the rate $R$ will be 0 when the temperature is larger than $T_{max}$ or smaller than $T_{min}$.
+	The final model is the Yan and Hunt model (Equation~\ref{eq:yanhunt}), another phenomenological model with 4 parameters. $R_{max}$ is the maximum rate of respiration/photosynthesis, and $T_{opt}$ is the temperature at which this occurs. $T_{max}$ and $T_{min}$ are equivalent to $T_0$ and $T_m$ in the Briere-1 and Briere-2 models. Like for the Briere models, the rate $R$ will be 0 when the temperature is larger than $T_{max}$ or smaller than $T_{min}$.
 	
 	\begin{equation} \label{eq:yanhunt}
 	R = R_{max} 
@@ -124,20 +131,14 @@ As climate change is such a pressing issue, it is critical that the predictions 
 
 	\subsection{Model fitting and selection}
 	\subsubsection*{Computing tools}
-	All analyses were performed in R (version 3.4.2) using RStudio. R was used due to its many useful in-built functions and statistical packages. It also has superior data visualisation (ggplot2 package). I did not mix use of R and Python. This created coherency across my scripts, and allowed me to use functions and variables from one script in another without having to import them. To run all the scripts together, I used bash, due to its ease of use.
+	All analyses were performed in R (version 3.4.2) using RStudio. R was used due to its many useful in-built functions and statistical packages. It also has excellent data visualisation tools (ggplot2 package). I did not mix use of R and Python. This created coherency across my scripts, and allowed me to use functions and variables from one script in another without having to import them. To run all the scripts together, I used bash, due to its ease of use.
 	
 	\subsubsection*{Model fitting}
-	The quadratic and cubic models were fitted using ordinary least squares regression via the lm() function, with the fit points being produced by the predict.lm() function.
-	
-	The non-linear models were fit using non-linear least squares, which was performed using the nlsLM() function from the 'minpack.lm' package. This function uses the Levenberg-Marquardt type fitting algorithm. TO DO: SELECTION OF STARTING VALUES?
+	The quadratic and cubic models were fit using OLS regression, and the non-linear models were fit using non-linear OLS regression, using the Levenberg-Marquardt type fitting algorithm. I sampled the starting values for all parameters of all non-linear models to achieve the best possible fit.
 	
 	\subsubsection*{Model selection}
-	TODO: needs expanding, eg. what are AIC, BIC, AICc (AICc = second order derivative of AIC \cite{johnsonModelSelectionEcology2004}
-	A few model selection criteria were tested, in order to align with the aims of seeing how selection criteria affects model selection. Most simply, Akaike information criteria (AIC), small-sample unbiased AIC (AIC$_c$) and Bayesian information criteria (BIC) were performed on each model fit for each dataset (ID) and the number of times each model was selected by each criteria was compared. This will henceforth be referred to as the number of 'wins'. The AIC() and BIC() functions were used to calculate AIC and BIC, and the in-built calculations these functions perform are shown in Equations~\ref{eq:AIC} and \ref{eq:BIC} respectively. AIC$_c$ is an adapted version of AIC used for small sample sizes, and was calculated manually, using Equation~\ref{eq:AICc}. In all these equations, $n$ refers to the sample size, $K$ to the number of free parameters in the model, and $RSS$ to the residual sums of squares of the model fit. 
-
-TO DO: replace with official equations, put equations I used in appendix
-TO DO: talk about delta aic: use \cite{krenekThermalPerformanceCurves2011} as a guide
-
+		I used three model selection criteria, in order to compare the results of each. All provide a measure for the quality of fit of a particular model to a dataset \cite{sakamotoAkaikeInformationCriterion1988}. I used Akaike Information Criterion (AIC), the second-order corrected AIC (AIC$_c$), and Bayesian Information Criterion (BIC). AIC assumes there is no "true model" for the data, and ranks models according to their closeness to a hypothetical "true" model, whereas BIC assumes that there is a "true model" and that it's within the model set \cite{burnhamModelSelectionMultimodel2002}. AIC$_c$ is a version of AIC that not only compensates for bias in fit with model complexity (as AIC does \cite{akaikeNewLookStatistical1974}) but also compensates for bias with small sample sizes \cite{hurvichRegressionTimeSeries1989}. For each dataset, the best model is the one with the smallest AIC/BIC/AIC$_c$, calculated according to Equations~\ref{eq:AIC}-\ref{eq:AICc}. These equations lay out their implementation in my code (implicitly in the case of AIC and BIC), where $n$ refers to the sample size, $K$ to the number of free parameters in the model, and $RSS$ to the residual sums of squares of the model fit. The number of times a model was deemed the best fit by the respective model criteria (henceforth described as 'wins') was compared across models. 
+	
 	\begin{equation} \label{eq:AIC}
 	AIC = n + 2 + n\ln
 		\left(
@@ -161,14 +162,26 @@ TO DO: talk about delta aic: use \cite{krenekThermalPerformanceCurves2011} as a 
 			\frac{n}{n - K - 1}
 		\right)
 	\end{equation}
-	
-	Then, Akaike Weights were calculated from both the AIC and the AIC$_c$ values, to give a more concrete comparison of goodness of fit across the models. Weights provide the relative weight of evidence for each model for each dataset (Johnson + omland). Equation~\ref{eg:weights} shows how $W_i$, the weight of model $i$, was calculated from AIC for each dataset $y$, where $L(i | y)$ is the likelihood of model $i$ given the data $y$, and $R$ is the total number of models. The same equation was used to calculate Akaike weights from AIC$_c$, except with $AIC_i - AIC_{min}$ substituted for $AICc_i - AICc_{min}$. The distribution of Akaike weights for each model was used, with the median weight acting as a proxy for the overall goodness of fit of a particular model to the datasets. I chose the median rather than the mean as I felt it better represented the typical weight for a particular model, as the distribution of weights in most cases was very large, with outliers at very high values, causing a higher mean.
+
+	As an additional measure of model success, Akaike weights were calculated from the AIC and AIC$_c$ values. Weights provide the relative weight of evidence for each model for each dataset, and sum to 1 \cite{johnsonModelSelectionEcology2004}. Equation~\ref{eg:weights} shows how $W_i$, the weight of model $i$, was calculated from AIC for each dataset $y$, where $L(i | y)$ is the likelihood of model $i$ given the data $y$, and $R$ is the total number of models. The same equation was used to calculate Akaike weights from AIC$_c$, except with $AIC_i - AIC_{min}$ substituted for $AICc_i - AICc_{min}$. The distribution of Akaike weights for each model was analysed, with the median weight acting as a proxy for the overall goodness of fit of a model across all datasets. I chose the median over the mean as it better represented the typical weight for a particular model, as there were often outliers at very high weight values, skewing the mean.
 	
 	\begin{align} \label{eg:weights}
 	W_i &= \frac{L(i | y)}{\sum_{j = i}^{R}L(j | y) }
 	& L(i | y) &= exp(-\frac{1}{2} (AIC_i - AIC_{min})) 
 	\end{align}
 	
+	
+\begin{figure} [H]
+	\includegraphics[width=\textwidth]{../Figures/Shapes_of_curves.pdf}
+	\caption{\label{fig:curves} \textbf{Example TRC fits.} Examples of the different curve classifications of the datasets with all models fitted to them. 'Rate' refers to the rate of either photosynthesis or respiration, units vary. (a) Unimodal, dataset ID = 118 (b) Rising, ID = 22 (c) Falling, ID = 52 (d) Non-typical, ID = 99}
+\end{figure}	
+
+\begin{figure} [H]
+	\centering
+	\includegraphics[width = \textwidth]{../Figures/Curve_type_wins.pdf}
+	\caption{\label{fig:wins_plot} \textbf{Number of wins for each model under different selection criteria.} Number of wins is split into wins per curve classification for each model for (a) AIC$_c$ (b) AIC (c) BIC. Number of 'wins' refers to the number of datasets where a particular model was deemed the best fit by the model selection criteria. Numbers over the bars equate to the total number of wins for each model. A linear model won under all selection criteria, partly due to them winning a large proportion of non-unimodal datasets.}	
+\end{figure}
+
 \section{Results}
 
 \subsection{The optimal model according to the selection criteria}
@@ -177,17 +190,33 @@ The optimal model for the data varied depending on the model selection criteria,
 \subsubsection*{The model with the most wins}
 Using both the AIC and BIC selection criteria, the cubic model had the most wins (Figure~\ref{fig:wins_plot}). However, using AIC$_c$ the quadratic model had the most wins. The best non-linear model according to AIC and BIC was the Yan and Hunt model, whereas it was the Briere-1 model according to AIC$_c$.
 
+
+
 \subsubsection*{The model with the highest median Akaike weight}
 The median Akaike weight for each model gave the same result as the number of wins for both AIC and AIC$_c$, except in the case of the Yan and Hunt and quadratic models under AIC (Figure~\ref{fig:weights}a and b). The quadratic model had more wins than Yan and Hunt, but a far lower median Akaike weight. This suggests that quadratic model either wins or doesn't fit well, whereas the Yan and Hunt model is more consistently a good fit, even if it doesn't win. Across all models, for both AIC and AIC$_c$, the range of Akaike weights for each model was very large, showing the diversity of the datasets.
 
 \subsection{The effect of the curve classification}
-All models visually fit well on the expected thermal response curve, a negative parabola with a sharp decline at higher temperatures (unimodal) (Figure~\ref{fig:curves}a). However, not all datasets took this shape, as shown by Figure~\ref{fig:curves}. Cases of rising responses were very common (Figure~\ref{fig:curves}b), and there were also a few cases of falling responses (Figure~\ref{fig:curves}c). This could be due to an insufficient range of temperatures being tested. However, there were also a significant number of datasets whose data did not fit the expected thermal response curve at all, classed as non-typical (Figure~\ref{fig:curves}d).
+All models visually fit well on the expected TRC: a negative parabola with a sharp decline at higher temperatures (unimodal) (Figure~\ref{fig:curves}a). However, not all datasets took this shape, as shown by Figure~\ref{fig:curves}. Cases of rising responses were very common (Figure~\ref{fig:curves}b), and there were also a few cases of falling responses (Figure~\ref{fig:curves}c). This could be due to an insufficient range of temperatures being tested. However, there were also a significant number of datasets whose data did not fit the expected TRC at all, classed as non-typical (Figure~\ref{fig:curves}d).
 
-As the non-linear models have a far less flexible shape compared to the linear quadratic and cubic equations, they were much less likely to win against the linear models for non-unimodal response curves, and sometimes didn't fit well at all, as the Briere-1 model in Figure~\ref{fig:curves}c shows. This is evident, as the linear models (cubic and quadratic) won a far higher proportion of non-unimodal (falling, rising and non-typical) datasets than the non-linear models, especially for AIC and BIC (Figure~\ref{fig:wins_plot}). When comparing only unimodal response curves, the Yan and Hunt model had more wins than quadratic under both AIC and BIC whereas the reverse is true when non-unimodal response curves are considered.
+As the non-linear models have a far less flexible shape compared to the linear quadratic and cubic equations, they were much less likely to win against the linear models for non-unimodal response curves, and sometimes didn't fit well at all. This is evident, as the linear models (cubic and quadratic) won a far higher proportion of non-unimodal (falling, rising and non-typical) datasets than the non-linear models, especially for AIC and BIC (Figure~\ref{fig:wins_plot}). When comparing only unimodal response curves, the Yan and Hunt model had more wins than quadratic under both AIC and BIC whereas the reverse is true when non-unimodal response curves are considered.
 
 
 \subsection{The effect of sample size}
-The result from AIC$_c$ was very different to AIC and BIC, in terms of the optimal models chosen (Figures~\ref{fig:wins_plot} and \ref{fig:weights}). Under AIC$_c$, the quadratic and Briere-1 models had far more wins than the other models, and also were the only models with wins at very small sample sizes (5 - 6 data points) (Figure~\ref{fig:sample_size_line}a). This suggests that at these small sample sizes, the number of parameters of the model plays a very large part. The quadratic and Briere-1 models both have three parameters (Equations~\ref{eq:quad} and \ref{eq:briere} respectively), whereas all of the other models (Briere-2, cubic, Yan and Hunt) have four parameters. Therefore, the selection of the quadratic model under AIC$_c$ has more to do with the large number of datasets with small sample sizes than it visually fitting the data points better. The other models were only able to win for datasets with more data points. AIC$_c$ is a small-sample corrected version of AIC, with a focus on preventing over-fitting by penalising models with more parameters at smaller sample sizes, so this result makes sense.
+The result from AIC$_c$ was very different to AIC and BIC in terms of the optimal models chosen (Figures~\ref{fig:wins_plot} and \ref{fig:weights}). Under AIC$_c$, the quadratic and Briere-1 models had far more wins than the other models, and also were the only models with wins at very small sample sizes (5 - 6 data points) 
+
+\begin{figure} [H]
+	\includegraphics[width=\textwidth]{../Figures/Weights_boxplot.pdf}
+	\includegraphics[width=\textwidth]{../Figures/Weights_boxplot_SS.pdf}
+	\caption{\label{fig:weights} \textbf{Distribution of Akaike weights with and without small sample sizes.} Boxplot showing distribution of Akaike weights across the datasets for each model using different selection criteria (a) AIC for all datasets (b) AIC$_c$ for all datasets (c) AIC for datasets with sample size $>$ 10 (d) AIC$_c$ for datasets with sample size $>$ 10. AIC$_c$ results very different to AIC with all datasets considered, but much more similar with small datasets removed.}
+\end{figure}
+
+\begin{figure} [H]
+	\includegraphics[width=\textwidth]{../Figures/Sample_size_per_model.pdf}
+	\caption{\label{fig:sample_size_line} \textbf{Proportion of wins across dataset sample sizes.} The proportion of all wins with each sample size (for sample size $<$ 30), for each model and selection criteria: (a) AIC$_c$ (b) AIC (c) BIC. 'Wins' refers to the number of datasets where a particular model was deemed the best fit by the model selection criteria. Briere-1 and quadratic have a high proportion of wins at very small sample sizes using AIC$_c$. Line of best fit determined using local polynomial regression fitting (loess() function).}
+\end{figure}
+\bigskip
+
+(Figure~\ref{fig:sample_size_line}a). This suggests that at these small sample sizes, the number of parameters of the model plays a very large part in model selection. The quadratic and Briere-1 models both have three parameters (Equations~\ref{eq:quad} and \ref{eq:briere} respectively), whereas all of the other models (Briere-2, cubic, Yan and Hunt) have four parameters. Therefore, the selection of the quadratic model under AIC$_c$ has more to do with the large number of datasets with small sample sizes than it visually fitting the data points better. The other models were only able to win for datasets with more data points. AIC$_c$ is a small-sample corrected version of AIC, with a focus on preventing over-fitting by penalising models with more parameters at smaller sample sizes, so this result makes sense.
 
 This is further corroborated by the fact that when datasets with the smallest sample sizes (5 - 10 data points) weren't considered, the median Akaike weight by model according to AIC$_c$ looked much more like the result for AIC (Figure~\ref{fig:weights}c and d). In this case the Yan and Hunt model and cubic appear on par as the optimal models, rather than the quadratic. 
 
@@ -195,139 +224,41 @@ The optimal model selected by AIC is also affected by the elimination of small d
 
 \subsection{The optimal model for respiration versus photosynthesis}
 
-When the datasets are split into response curves for respiration and photosynthesis, the optimal model doesn't change. However, the linear models have a higher proportion of wins for respiration response curves than for photosynthesis response curves, across all model selection criteria (AIC, BIC and AIC$_c$) (Figure~\ref{fig:photo_resp_model}). Further analysis reveals that this is likely due to differences between their datasets: the photosynthesis datasets have a far higher proportion of unimodal response curves than the respiration datasets, which mainly consists of rising response curves (Figure~\ref{fig:photo_resp_curve_type}). In addition, a higher proportion of the respiration datasets have very small sample sizes than the photosynthesis datasets (Figure~\ref{fig:photo_resp_ss}). Low sample size and non-unimodal response curves both cause reduced goodness of fit for non-linear models across all model selection criteria, as discussed earlier.
-
-SHOUDLNT I DO A FINAL SHOW OF WINS WITH LARGE SS AND ONLY UNIMODAL? SEE IF NON LINEAR WINS?
+When the datasets are split into response curves for respiration and photosynthesis, the optimal model doesn't change. However, the linear models have a higher proportion of wins for respiration response curves than for photosynthesis response curves, across all model selection criteria (AIC, BIC and AIC$_c$) (Figure~\ref{fig:photo_resp_model}). Further analysis reveals that this is likely due to differences between their datasets: the photosynthesis datasets have a far higher proportion of unimodal response curves than the respiration datasets. The respiration TRCs mainly consist of rising response curves (Figure~\ref{fig:photo_resp_curve_type}). In addition, a higher proportion of the respiration datasets have very small sample sizes than the photosynthesis datasets (Figure~\ref{fig:photo_resp_ss}). Low sample size and non-unimodal response curves both cause reduced goodness of fit for non-linear models across all model selection criteria, as discussed earlier.
 
 
-\begin{figure} [H]
-	\includegraphics[width=\textwidth]{../Figures/Shapes_of_curves.pdf}
-	\caption{\label{fig:curves} Examples of the different curve classifications of the datasets with all models fitted to them. 'Rate' refers to the rate of either photosynthesis or respiration, units vary. (a) Unimodal, ID = 118 (b) Rising, ID = 22 (c) Falling, ID = 52 (d) Non-typical, ID = 99}
-\end{figure}
-
-\begin{figure} [H]
-	\centering
-	\includegraphics[width = \textwidth]{../Figures/Curve_type_wins.pdf}
-	\caption{\label{fig:wins_plot} Number of wins for each model under the three different selection criteria, split into wins per curve classification. Number of 'wins' refers to the number of datasets where a particular model was deemed the best fit by the model selection criteria. (a) AIC$_c$ (b) AIC (c) BIC.}	
-\end{figure}
-
-\begin{figure} [H]
-	\includegraphics[width=\textwidth]{../Figures/Weights_boxplot.pdf}
-	\includegraphics[width=\textwidth]{../Figures/Weights_boxplot_SS.pdf}
-	\caption{\label{fig:weights} Boxplot showing distribution of Akaike weights across the datasets for each model using different selection criteria (a) AIC for all datasets (b) AIC$_c$ for all datasets (c) AIC for datasets with sample size $>$ 10 (d) AIC$_c$ for datasets with sample size $>$ 10}
-\end{figure}
-
-
-\begin{figure} [H]
-	\includegraphics[width=\textwidth]{../Figures/Sample_size_per_model.pdf}
-	\caption{\label{fig:sample_size_line} The proportion of all wins with each sample size (for sample size $<$ 30), for each model and selection criteria. 'Wins' refers to the number of datasets where a particular model was deemed the best fit by the model selection criteria. Line of best fit determined using local polynomial regression fitting (loess() function). (a) AIC$_c$ (b) AIC (c) BIC}
-\end{figure}
-
-\begin{figure} [H]
-	\includegraphics[width=\textwidth]{../Figures/Sample_size_boxplot.pdf}
-	\caption{\label{fig:sample_size_box} Distribution of sample sizes for the datasets that each model had the best fit for (based on AIC$_c$). (a) Full range. (b) Sample size $<$ 60 }
-\end{figure}
-
-INSTEAD OF THIS: TABLE WITH MEAN AND MEDIAN SAMPLE SIZE PER MODEL? OR MAKE PLOT B A SUBPLOT ON LINE GRAPH? DO SAME FOR AIC AND BIC??
 \begin{figure} [H]
 	\includegraphics[width=\textwidth]{../Figures/Sample_size_per_curve.pdf}
-	\caption{\label{fig:sample_size_per_curve} Distribution of sample sizes across each curve classification. (a) Number of datasets per sample size per curve classification. (b) Datasets per sample size as a proportion of total datasets for each curve classification}
+	\caption{\label{fig:sample_size_per_curve} \textbf{Distribution of sample sizes across each curve classification.} (a) Number of datasets per sample size per curve classification. (b) Datasets per sample size as a proportion of total datasets for each curve classification. Line of best fit determined using local polynomial regression fitting (loess() function). Proportion of 'falling' curves at low sample sizes is disproportionately high.}
 \end{figure}
-
-
-
-
-
-
-
-%\begin{table} [H]
-%\centering
-%\begin{tabular}{l l l l}
-%	\hline
-%	Model & AIC & AICc & BIC \\
-%	\hline
-%	\\ [-7pt]
-%	Quadratic & 213 & 523 & 210 \\
-%	Cubic & 307 & 59 & 311 \\
-%	Briere-1 & 70 & 232 & 75 \\
-%	Briere-2 & 135 & 36 & 132 \\
-%	Yan and Hunt & 178 & 53 & 175 \\
-%	\hline
-%\end{tabular}
-%\caption{\label{table:wins}
-%Number of wins for each model using three different selection %criteria}
-%\end{table}
-
-
-
-
 
 \begin{figure} [H]
 	\includegraphics[width=\textwidth]{../Figures/Photo_resp_model_wins.pdf}
-	\caption{\label{fig:photo_resp_model} Proportion of wins for each model when split into respiration and photosynthesis response types, for (a) AIC$_c$ (b) AIC (c) BIC.}
-\end{figure}
-
-\begin{figure} [H]
-	\includegraphics[width=\textwidth]{../Figures/Photo_resp_curve_type.pdf}
-	\caption{\label{fig:photo_resp_curve_type} Number of datasets for respiration and photosynthesis response types, divided by curve classification.}
-\end{figure}
-
-\begin{figure} [H]
-	\includegraphics[width=\textwidth]{../Figures/Photo_resp_sample_size.pdf}
-	\caption{\label{fig:photo_resp_ss} Proportion of all datasets with each sample size (for sample size $<$ 50), for each response type (respiration and photosynthesis)}
+	\caption{\label{fig:photo_resp_model} \textbf{Proportion of wins for photosynthesis versus respiration TRCs.} Proportion of photosynthesis and respiration TRCs won by each model, for each selection criteria: (a) AIC$_c$ (b) AIC (c) BIC. Respiration TRCs have a higher proportion of wins by linear models under all selection criteria.}
 \end{figure}
 
 
 \section{Discussion}
 
-The aim of this study was to investigate the effect that non-biological considerations, such as sample size, data quality and selection criteria, can have on the optimal model for a dataset or a series of datasets. I found that all these factors affected the optimal model chosen to some extent.
+This study investigated the effect that non-biological considerations, such as sample size, data quality and selection criteria, can have on the optimal model for a  series of datasets. I found that all these factors affected the optimal model to some extent.
 
-As expected, using different model selection criteria significantly impacts the optimal model, especially in the case of AIC versus AIC$_c$. When the number of parameters ($K$) exceeds $n/40$ (e.g. at small sample sizes), AIC$_c$ should be used \cite{johnsonModelSelectionEcology2004}. The principle of parsimony aims to find a model with "the smallest possible number of parameters for adequate representation of the data" (box + jenkins, from textbook), which means there is a tradeoff between bias and variance, synonymous with a tradeoff between overfitting and underfitting \cite{ModelSelectionMultimodel}. In AIC, the last term of the equation, "$+2K$" (Equation~\ref{eq:AIC}) increases with increasing parameters (as $K$ is the number of parameters), acting as the method to prevent overfitting, by penalising higher dimensional models. However, this isn't sufficient when the sample size ($n$) is not very small compared to the number of parameters ($K$), as is the case for the data I've analysed, where the most common values of $n$ are 5 and 6, and $K$ is 3 or 4 for all models. AIC$_c$ (Equation~\ref{eq:AICc}) is the equivalent of AIC + $\frac{2K(K+1)}{n-K-1}$. This extra term more heavily penalises higher dimensional models at smaller sample sizes, tending towards AIC as sample size increases. This is clear from my results, as on the smallest datasets, the 3 parameter models (quadratic and Briere-1) were exclusively chosen.
+As expected, using different model selection criteria significantly impacts the optimal model, especially in the case of AIC versus AIC$_c$. When the number of parameters ($K$) exceeds $n/40$ (such as at small sample sizes), AIC$_c$ should be used \cite{johnsonModelSelectionEcology2004}. The principle of parsimony aims to find a model with "the smallest possible number of parameters for adequate representation of the data" \cite{burnhamModelSelectionMultimodel2002}, causing a trade-off between bias and variance, synonymous with a trade-off between overfitting and underfitting \cite{burnhamModelSelectionMultimodel2002}. In AIC, the last term of the equation, "$+2K$" (Equation~\ref{eq:AIC}) increases with increasing model dimension (as $K$ is the number of parameters), preventing overfitting by penalising higher dimensional models. However, this isn't sufficient at very small sample sizes ($n$), as is the case for the data I've analysed, where the most common values of $n$ are 5 and 6, and $K$ is 3 or 4 for all models. AIC$_c$ (Equation~\ref{eq:AICc}) is the equivalent of AIC + $\frac{2K(K+1)}{n-K-1}$. This extra term more heavily penalises higher dimensional models at smaller sample sizes, tending towards AIC as sample size increases. This is clear from my results, as on the smallest datasets, the 3 parameter models (quadratic and Briere-1) were exclusively chosen.
 
-Using BIC gave a similar result to AIC, suggesting it also doesn't sufficiently penalise higher dimensional models. This makes sense given the architecture of BIC. BIC is based on the assumption that there is a "true" model for the data, and that it's within the given model set. As such, the "best" model doesn't vary with sample size \cite{ModelSelectionMultimodel}. By contrast, AIC is built on the assumption that no "true" model exists, and estimates the relative distance between the fitted model and the theoretical true model that perfectly fits the data. It therefore selects the best model for a given sample size \cite{ModelSelectionMultimodel}. Therefore, AIC (or AIC$_c$ in this case) is likely a better model selection criteria, given that I have fitted only 5 models and the chance one of them is the "true" model (if such a thing exists) is practically non-existent.
+Using BIC gave a similar result to AIC, suggesting it also doesn't sufficiently penalise higher dimensional models. This makes sense given the architecture of BIC. BIC is based on the assumption that there is a "true" model for the data, and that it's within the given model set. As such, the "best" model doesn't vary with sample size \cite{burnhamModelSelectionMultimodel2002, schwarzEstimatingDimensionModel1978}. By contrast, as AIC is built on the assumption that no "true" model exists, it selects the best model for a given sample size \cite{burnhamModelSelectionMultimodel2002}. Therefore, AIC (or AIC$_c$ in this case) is likely a better model selection criteria than BIC, given that I have fitted only five models and the chance one of them is the "true" model (if such a thing exists) is practically non-existent. AIC and BIC have also been compared empirically, such as by Umbach and Wilcox \cite{umbachTechniqueMeasuringEpidemiologically1996}, who found for a sample size up to 100,000 AIC performed better than BIC. As I am working with sample sizes a fraction of this amount, this reinforces that AIC$_c$ is the correct method to use.
 
-AIC and BIC have also been compared empirically, such as by Umbach and Wilcox (1996:1341). They performed Monte Carlo simulations and found for a sample size up to 100000, AIC performed better than BIC. As I am working with sample sizes a fraction of this amount, this reinforces that AIC$_c$ is the correct method to use.
+There were also differences when comparing the models using Akaike weights versus the number of wins, such as in the case of the Yan and Hunt and quadratic models using AIC (see Results). The distribution of weights gives an idea of the average goodness of fit across the datasets whereas the number of wins shows best for each dataset, regardless of how good the other models were in comparison, losing important data. It's also important to consider that both these measures show which models are the best of the five fitted, but not necessarily the absolute best for these TRCs. Selection criteria can only select the best model from the candidate set \cite{johnsonModelSelectionEcology2004}.
 
-This leads to the next finding of my study: the importance of vetting and refining your data. With all 903 datasets considered, AIC$_c$ selected the quadratic model as the optimal model, followed by Briere-1. However, the high number of datasets with extremely small sample sizes caused this result: on a dataset with only 5 data points, it is very unlikely a model with $K=4$ will be selected as optimal. When those datasets with the smallest sample sizes were removed, the optimal models changed dramatically. This demonstrates the importance of comparing your data and the models you propose to fit, and possibly not including extremely small datasets.
+This study also shows the importance of knowing your data and refining it if necessary. With all 903 datasets considered, AIC$_c$ selected the quadratic model as the optimal model, followed by Briere-1. The high number of datasets with extremely small sample sizes caused this result; on a dataset with only 5-6 data points, it is very unlikely a model with $K=4$ will be selected as optimal. When those datasets with the smallest sample sizes were removed, the optimal models changed dramatically. This demonstrates the importance of comparing your data and the models you propose to fit, and possibly not including extremely small datasets.
 
-With the smallest datasets removed, the Yan and Hunt had the highest median Akaike weight of the non-linear models. It had an extremely similar median weight to the cubic model, but linear models such as the cubic aren't as useful, as their parameters have no biological meaning, limiting their prediction abilities. The Yan and Hunt model has found success in the literature \cite{adamsModelFitBiological2017, vanderheideSimpleEquationDescribing2006}. For example, Adams et al. \cite{adamsModelFitBiological2017} determined it to be the best model to describe tropical seagrass photosynthesis TRCs, as it had one of the best fits as well as biologically meaningful parameters. However, it is important to consider that the Briere-1 could also be considered the best non-linear model, as it had the best fit (after the quadratic model) when all datasets were included. The choice of whether to include datasets with small sample sizes depends on the circumstances of the analysis and is down to the discretion of the scientist. Decisions such as this are important to consider carefully, as they clearly have major impacts on the conclusions drawn.
+With the smallest datasets removed, the Yan and Hunt model had the highest median Akaike weight of the non-linear models. It had an extremely similar median weight to the cubic model, but linear models aren't as useful, as their parameters have no biological meaning. The Yan and Hunt model has found success in the literature \cite{adamsModelFitBiological2017, vanderheideSimpleEquationDescribing2006}. For example, Adams et al. \cite{adamsModelFitBiological2017} determined it was the best model to describe tropical seagrass photosynthesis TRCs, as it had one of the best fits and biologically meaningful parameters. However, Briere-1 could also be considered the best non-linear model, as it had the best fit (after the quadratic model) when all datasets were included. The choice of whether to include datasets with small sample sizes depends on the circumstances of the analysis and is down to the discretion of the researcher. These decisions are important, as they clearly have major impacts on the conclusions drawn.
 
-It's also important to consider that these just best of the ones i tested: - model selected ultimately depends on the models chosen for the candidate set so if you dont include a model that could best represent the process the could lead to misguided inference (=pitfall)(johnson and omland 2004)
+The shape of the response curve is another important consideration. The models I've used are all phenomenological and designed to fit a full unimodal TRC \cite{yanEquationModellingTemperature1999, briereNovelRateModel1999}, which could explain why they performed worse on non-unimodal curves. Some non-linear models have adjustments for fitting rising/falling data, such as the Boltzman-Arrhenius \cite{dellSystematicVariationTemperature2011} or Schoolfield  \cite{schoolfieldNonlinearRegressionBiological1981} models, which should be taken into account when designing an analysis. However, in general, it is advisable to measure thermal response over the full range of temperatures, as this has both been essential for making predictions about the effects of climate change  \cite{hueyWhyTropicalForest2009}, and ensures optimal fits \cite{dellSystematicVariationTemperature2011}.
 
-The shape of the response curve is another important consideration. The models I used are designed to be used for a full unimodal response curve (reference briere, yan + hunt paper) which could explain why they struggled on non-unimodal. other ones eg. schoolfield, bolzman (pawar, dell 2016) can deal with rising. schoolfield has different options. maybe disadvantage in that mine were all phenomenological as well? - if you want to analyse rise and or fall components that's fine, importance is to think carefully about data to include and what you're testing.	- experimentalists should measure over full range of temps, not only for making predictions about eg. effects of climate change (pawar, dell 2016) (ref 53 of this paper) but also to ensure optimal fits for thermal response curves. 
+The culmination of these considerations can be seen when comparing the photosynthesis and respiration TRCs; a great deal of their differences in optimal models can be explained by differing curve types and sample sizes rather than biological differences. However, further research is needed into whether some of the variation is caused by biology, as respiration has been predicted to increase faster with rising temperature than photosynthesis due to the differing temperature-dependency of their key enzymes \cite{gutowMarineMesoherbivoreConsumption2016, allenLinkingGlobalCarbon2005}.
 
-Weights versus number of wins, weights give better idea of general goodness of fit eg in case of Yan and Hunt versus quadratic for AIC. wins only shows best for each dataset, not taking into account how good a fit it actually was, just compared it to other models. weight is the weight of evidence in favour of a model being the best model given that one of the models must be the best (textbook, probs MF in EE too). just in comparison to each other. - akaike weights not high for any model (except quad under AIC$_c$), no model worked universally well, could also be a failure from me to adequately fit the models.
+There are also other areas where further research would be beneficial. Firstly, fitting a larger number and wider variety of model types would benefit the analysis, for example allowing a comparison of mechanistic and phenomenological models. In addition, my analysis showed evidence that the non-linear models fit better at larger sample sizes, which would benefit from further study to see if this is a true effect. A potential weakness of my study is that I didn't use the rule of thumb for model selection, that states if two models have fits within 2 of each other, both have substantial support and are optimal models for the dataset \cite{johnsonModelSelectionEcology2004, burnhamModelSelectionMultimodel2002}. This would be useful to include in a future analysis, especially as the models often won by a small margin. However, there is some assertion that when sample sizes are very small, these guidelines cannot be expected to hold \cite{burnhamModelSelectionMultimodel2002}, so I think my analysis is still valid without this consideration. Finally, the linear models doing as well as or better than the non-linear in many cases could suggest further optimisation of the fitting of the latter is needed. However, this could also be due to small temperature ranges in many datasets \cite{dellSystematicVariationTemperature2011}, another area that would benefit from further study.
 
-- ***non-linear models fit better at larger sample sizes - TRUE IN LITERATURE?? CHECK - put in future directions ??
-
-- photosynthesis and resp curves have differences but likely an artefact of differing curve types and sample sizes rather than having biological meaning. 	- ***is there evidence of photo and resp curves being diff? yes - see \cite{MarineMesoherbivoreConsumption2016} - resp rises faster than photo. need further study to analyse this, maybe with one meant for a rise eg arrhenius botlzman - look at \cite{dellSystematicVariationTemperature2011}
-
-shortcomings:
-- only tested 5 models, so need to test more to assert goodness of yan and hunt
-- could have fitted the non-linear more optimally
-- didnt estimate parameters
-- further research needed into why my non-linear models performed better at larger sample sizes
-- consider better method for separating curve types - mine was good enough but not perfect. minimum in data meant some rising were classed as non-typical
-\\ - didnt do rule of thumb for optimal model: Generally accepted that models with AIC within 1-2 of each other both have substantial support, and should both be considered to be the optimal model (textbook)(model sele in E+E). I didn't do this, so would be useful in future, especially as Yan and Hunt and cubic were very close (under AIC$_c$ with $n$ > 10). However, there is some assertion that when sample sizes are very small, these guidelines cannot be expected to hold (textbook), so I think my analysis is still valid without this consideration.
-- didnt check if NLLS/OLS assumptions were met (nlls has same assumptions as ols): 		- No measurement error in explanatory variable (only error in rsponse)
-		- Data have constant normal variance
-		- Obs error distribution is Gaussian
-What if errors are not normal? Use max likelihood or bayesian methods instead (not expected in mini project)
-
-CONCLUSION HERE
-
-\textbf{**NOTES**}
-
-**To put in**: using AICc reduces probability of selecting an overfit model when sample size is small
-REFERENCE ACTUAL AKAIKE + SHWARZ PAPER SOMEWHERE (Akaike 1973)
-
--AICc is closer to BIC? (omland paper) - look into
-
-Validation - the validation of a model isn't to work out whether its 'true', as a model is not a hypothesis and isn't directly verifiable by experiment. Validation is about ensuring the model generates a good testable hypothesis relevant to important problems. (levins 1966)
-\\
-Unlike the theory, models are constrained to a few components at a time, even if the theory is complex. Therefore, a good theory is usually a cluster of models. (levins 1966)
-\\
--many models dont include minimum and maximum viable temperatures (t0 and tm) - briere does, schoolfield doesnt (see table 4, briere et al 1999)
+In conclusion, this study highlights the effects that analysis design can have on the conclusions drawn from an investigation, and therefore its predictions. It is important to carefully select the model selection criteria, models, and data subset used. With the onset of climate change, this is especially important in studies on the effects of temperature on species, as making accurate predictions will be vital to mitigating its effects.
 
 \bibliographystyle{ieeetr}
 \bibliography{Bibliography_main.bib}
@@ -335,6 +266,16 @@ Unlike the theory, models are constrained to a few components at a time, even if
 \newpage
 \section{Supplementary information}
 
+\beginsupplement % labels figures as S1, S2 etc.
 
+\begin{figure} [H]
+	\includegraphics[width=\textwidth]{../Figures/Photo_resp_curve_type.pdf}
+	\caption{\label{fig:photo_resp_curve_type} \textbf{Curve classification for photosynthesis versus respiration TRCs.} Number of respiration and photosynthesis datasets, divided into curve classifications. Photosynthesis TRCs have a far higher proportion of unimodal curves than respiration TRCs.}
+\end{figure}
+
+\begin{figure} [H]
+	\includegraphics[width=\textwidth]{../Figures/Photo_resp_sample_size.pdf}
+	\caption{\label{fig:photo_resp_ss} \textbf{Distribution of sample sizes for respiration versus photosynthesis TRCs.} Proportion of all datasets with each sample size (for sample size $<$ 50), for each response type (respiration and photosynthesis). A higher proportion of respiration datasets have small sample sizes than photosynthesis.}
+\end{figure}
 
 \end{document}

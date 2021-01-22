@@ -68,10 +68,10 @@ def a_function4():
 
 
 def a_function5():
-    "Defines and runs nested function to test variable scope in neste functions."
+    """Defines and runs nested function to test variable scope in neste functions."""
 
     def _a_function_nested2():
-        "Defines a global and local variable to be run within a_function5()."
+        """Defines a global and local variable to be run within a_function5()."""
         global _a_global
         _a_global = 20
 

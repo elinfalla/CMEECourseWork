@@ -12,7 +12,6 @@ rm(list = ls())
 
 therm <- read.csv("../Data/ThermRespData.csv", header = T, stringsAsFactors = F)
 
-
 ##### SHIFT DATASETS WITH NEGATIVE VALUES #####
 
 # define function to add minimum value to all values in a column if minimum value is > 0
@@ -31,14 +30,15 @@ newDF <-
 
 
 ###### CLASSIFY CURVE TYPES FOR EACH ID #######
+
 newDF$CurveClassification <- rep("NA", length(newDF$ID)) # NA as string so char type
 newDF$ConTemp2<- therm$ConTemp^2
 
+# initialise progress bar
+progress_bar <- txtProgressBar(min = 0, max = 1, style = 3)
 
 for (ID in 1:length(unique(newDF$ID))) {
-  
-  print(ID)
-  
+
   # subset data to one ID
   ID_subset <- newDF[newDF$ID == ID,]
   
@@ -84,6 +84,14 @@ for (ID in 1:length(unique(newDF$ID))) {
     newDF[newDF$ID == ID, "CurveClassification"] <- "non-typical"
   }
   
+  # increment progress bar to keep track of progress
+  fraction_done <- ID / length(unique(newDF$ID))
+  setTxtProgressBar(progress_bar, fraction_done)
+  
 }
 
+# close progress bar
+close(progress_bar)
+
+# write prepared data to csv
 write.csv(newDF, "../Data/PreparedThermRespData.csv")

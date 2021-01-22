@@ -1,6 +1,6 @@
 #!/usr/bin/env R
 
-#packages
+# packages
 require(minpack.lm)
 
 rm(list = ls())
@@ -29,13 +29,9 @@ model_fitsDF <- data.frame(ID = NA * max(therm$ID) * rows_per_subset,
 # number of parameters of each model
 num_param_quad <- 3
 num_param_cubic <- 4
-num_param_briere <- 3
+num_param_briere1 <- 3
 num_param_briere2 <- 4
 num_param_yan_hunt <- 4
-
-#initialise count for when AICc and AIC give different starting values
-AICc_AIC_diff <- vector()
-
 
 ### AICc function ###
 AICc <- function(vals, p, n) {  # p = number of free parameters, n = sample size
@@ -46,36 +42,30 @@ AICc <- function(vals, p, n) {  # p = number of free parameters, n = sample size
 
 ###### BRIERE 1 MODEL FUNCTIONS ###### 
 
-# briere model
-briere <- function(t, t_0, t_m, b_0) {
+# briere1 model
+briere1 <- function(t, t_0, t_m, b_0) {
   
   return(b_0 * t * (t - t_0) * (abs(t_m - t)^(1/2)) * as.numeric(t<t_m) * as.numeric(t>t_0))
         
 }
 
-# briere try function: tries to fit model using given start values. returns AIC and AICc if successful, else returns NA
-briere_try_func <- function(subset, t_0_start, t_m_start, b_0_start) {
+# briere1 try function: tries to fit model using given start values. returns AIC and AICc if successful, else returns NA
+briere1_try_func <- function(subset, t_0_start, t_m_start, b_0_start) {
   out <- tryCatch(
     expr = {
-      nlsLM(OriginalTraitValue ~ briere(t = ConTemp, t_0, t_m, b_0),
+      nlsLM(OriginalTraitValue ~ briere1(t = ConTemp, t_0, t_m, b_0),
                           data = subset,
                           start = list(t_0 = t_0_start,
                                        t_m = t_m_start,
                                        b_0 = b_0_start),
-                          control = list(maxiter = 500)#,
-                          #lower = c(-40, -40, 1e-7),
-                          #upper = c(100, 100, 1e+7)
-            )
+                          control = list(maxiter = 500))
     },
       error = function(cond) {
-        # print("")
-        # message("No fit possible. Error message:")
-        # message(cond)
-        return(NA)  # no output, if put NA then will output with NA
+        return(NA)
     }
   )
   if (all(!is.na(out))) {
-    AICc <- AICc(out, num_param_briere, nrow(subset))
+    AICc <- AICc(out, num_param_briere1, nrow(subset))
     return(c(AIC(out), AICc))
   }
   else {
@@ -83,38 +73,26 @@ briere_try_func <- function(subset, t_0_start, t_m_start, b_0_start) {
   }
 }
 
-# returns the best starting values from an inputted range of values using briere_try_func above. if no starting values yield a fit, return NA
-get_briere_start_vals <- function(subset, t_0_start, t_m_start, b_0_start, n_tests) {
+# returns the best starting values from an inputted range of values using briere1_try_func above. if no starting values yield a fit, return NA
+get_briere1_start_vals <- function(subset, t_0_start, t_m_start, b_0_start, n_tests) {
   
-  out <- lapply(1:n_tests, function(x) briere_try_func(subset, t_0_start[x], t_m_start[x], b_0_start[x]))
+  # apply try function to range of parameter values
+  out <- lapply(1:n_tests, function(x) briere1_try_func(subset, t_0_start[x], t_m_start[x], b_0_start[x]))
   
-  # print("**************")
-  # print(unique(subset$ID))
-  # print(out)
-  
+  # if no fits, return NA
   if (all(is.na(out))) {
     return(NA)
   }
   
+  # get AIC and AICc value returned (or NA value if no fit) for each start values sample
   AIC_vals <- lapply(out, function(x) if (all(!is.na(x))) x[1] else x)
   AICc_vals <- lapply(out, function(x) if (all(!is.na(x))) x[2] else x)
   
+  # find index of lowest AIC and AICc
   lowest_AIC <- which.min(AIC_vals)
   lowest_AICc <- which.min(AICc_vals)
-  
-  # print(lowest_AIC)
-  # print(lowest_AICc)
-  
-  if (lowest_AIC != lowest_AICc) {
-    print(paste("lowest AIC:", AIC_vals[lowest_AIC]))
-    print(paste("lowest AICc:", AICc_vals[lowest_AICc]))
-    
-    AICc_AIC_diff <- c(AICc_AIC_diff, unique(subset$ID))
-    
-    
-    
-  }
-  
+
+  # use AICc to define start vals (as better than AIC for small sample sizes), and return them
   final_t_0_start <- t_0_start[lowest_AICc]
   final_t_m_start <- t_m_start[lowest_AICc]
   final_b_0_start <- b_0_start[lowest_AICc]
@@ -147,10 +125,7 @@ briere2_try_func <- function(subset, t_0_start, t_m_start, b_0_start, m_start) {
             control = list(maxiter = 500))
     },
     error = function(cond) {
-      # print("")
-      # message("No fit possible. Error message:")
-      # message(cond)
-      return(NA)  # no output, if put NA then will output with NA
+      return(NA)
     }
   )
   if (all(!is.na(out))) {
@@ -163,15 +138,11 @@ briere2_try_func <- function(subset, t_0_start, t_m_start, b_0_start, m_start) {
   }
 }
 
-# returns the best starting values from an inputted range of values using briere_try_func above. if no starting values yield a fit, return NA
+# returns the best starting values from an inputted range of values using briere2_try_func above. if no starting values yield a fit, return NA
 get_briere2_start_vals <- function(subset, t_0_start, t_m_start, b_0_start, m_start, n_tests) {
   
   out <- lapply(1:n_tests, function(x) briere2_try_func(subset, t_0_start[x], t_m_start[x], b_0_start[x], m_start[x]))
-  
-  # print("**************")
-  # print(unique(subset$ID))
-  # print(out)
-  
+
   if (all(is.na(out))) {
     return(NA)
   }
@@ -216,10 +187,7 @@ yan_hunt_try_func <- function(subset, r_max_start, t_min_start, t_max_start, t_o
             control = list(maxiter = 500))
     },
     error = function(cond) {
-      # print("")
-      # message("No fit possible. Error message:")
-      # message(cond)
-      return(NA)  # no output, if put NA then will output with NA
+      return(NA)
     }
   )
   if (all(!is.na(out))) {
@@ -231,15 +199,11 @@ yan_hunt_try_func <- function(subset, r_max_start, t_min_start, t_max_start, t_o
   }
 }
 
-# returns the best starting values from an inputted range of values using briere_try_func above. if no starting values yield a fit, return NA
+# returns the best starting values from an inputted range of values using yan_hunt_try_func above. if no starting values yield a fit, return NA
 get_yan_hunt_start_vals <- function(subset, r_max_start, t_min_start, t_max_start, t_opt_start, n_tests) {
   
   out <- lapply(1:n_tests, function(x) yan_hunt_try_func(subset, r_max_start[x], t_min_start[x], t_max_start[x], t_opt_start[x]))
-  
-  # print("**************")
-  # print(unique(subset$ID))
-  # print(out)
-  
+
   if (all(is.na(out))) {
     return(NA)
   }
@@ -269,43 +233,41 @@ get_yan_hunt_start_vals <- function(subset, r_max_start, t_min_start, t_max_star
 # set number of times to run start vals
 n_tests <- 100
 
-# initialise empty vector to hold IDs where no fit was possible
-no_fit_briere <- vector()
-no_fit_briere2 <- vector()
-no_fit_yan_hunt <- vector()
+# initialise progress bar
+progress_bar <- txtProgressBar(min = 0, max = 1, style = 3)
 
+# for loop to loop through all IDs and fit all models
 for (count in 1:max(therm$ID)) {
-#for (count in 1:9) {
+
+  
+  ### --- SET SUBSET OF DATA AND RANGE OF TEMP POINTS --- ###
   subset <- therm[therm$ID == count,]
   
   #create temperature points vector for creating model fit lines
   temp_points <- seq(min(subset$ConTemp), max(subset$ConTemp), length.out = temp_points_out)
   
-  # fit quadratic model
+  
+  ### --- FIT QUADRATIC MODEL --- ###
   fit_quad <- lm(OriginalTraitValue ~ poly(ConTemp, 2), data = subset)
   quad_points <- predict.lm(fit_quad, data.frame(ConTemp = temp_points))
   
-  # fit cubic model
+  ### --- FIT CUBIC MODEL --- ###
   fit_cubic <- lm(OriginalTraitValue ~ poly(ConTemp, 3), data = subset)
   cubic_points <- predict.lm(fit_cubic, data.frame(ConTemp = temp_points))
   
+  ### --- FIT BRIERE-1 MODEL --- ###
   
-  
-  # runif is robust to negative values of contemp - if just divide then doesnt work for neg vals
-  # here 1 is scaling factor, larger number = smaller range of starting values
-  
+  ## -- Estimate T0 and TM and create ranges for sampling -- ##
   t_0_est <- min(subset$ConTemp)
   t_m_est <- max(subset$ConTemp)
-  scale_factor <- 5
+  t_scale <- 5
   
-  set.seed(230)
+  t_0_range <- runif(n_tests, t_0_est - (abs(t_0_est)/t_scale), t_0_est + (abs(t_0_est)/t_scale))
+  t_m_range <- runif(n_tests, t_m_est - (abs(t_m_est)/t_scale), t_m_est + (abs(t_m_est)/t_scale))
   
-  t_0_range <- runif(n_tests, t_0_est - (abs(t_0_est)/scale_factor), t_0_est + (abs(t_0_est)/scale_factor))
-  t_m_range <- runif(n_tests, t_m_est - (abs(t_m_est)/scale_factor), t_m_est + (abs(t_m_est)/scale_factor))
-  # t_0_range <- rnorm(n_tests, t_0_est, 1)
-  # t_m_range <- rnorm(n_tests, t_m_est, 1)
+  ## -- Estimate B0 and create ranges for sampling -- ##
   
-  # rearrange briere model to make b0 the subject to get a b0 value for each data point (trait value) in subset
+  # rearrange briere1 model to make b0 the subject to get a b0 value for each data point (trait value) in subset
   b_0_est <- (subset$OriginalTraitValue) / (subset$ConTemp * (subset$ConTemp - t_0_est) * ((t_m_est - subset$ConTemp)^(0.5)))
   
   # remove NA values and infinite values
@@ -316,77 +278,67 @@ for (count in 1:max(therm$ID)) {
   
   # create range around mean b0 to test values
   b_0_scale <- 3
-  #b_0_range <- runif(n_tests, b_0_mean, 1e+6)
-  b_0_range <- tryCatch(
-    runif(n_tests, b_0_mean/(10^(b_0_scale)), b_0_mean*(10^(b_0_scale))),
-    warning = function(warn) {
-      message("subset ID:", count)
-      message(runif(n_tests, b_0_mean/(10^(b_0_scale)), b_0_mean*(10^(b_0_scale))))
-      message(warn)
-      
-    }
-  )
-  #b_0_range <- runif(n_tests, b_0_mean/(10^(b_0_scale)), b_0_mean*(10^(b_0_scale)))
-  #b_0_range <- rnorm(n_tests, b_0_mean, 10^(round(log10(abs(b_0_mean)))))
+  b_0_range <- runif(n_tests, b_0_mean/(10^(b_0_scale)), b_0_mean*(10^(b_0_scale)))
+
+  ## -- Sample parameters and produce fit -- ##
+
+  # use parameter ranges to sample all parameters
+  briere1_start_vals <- get_briere1_start_vals(subset, t_0_range, t_m_range, b_0_range, n_tests)
   
-  briere_start_vals <- get_briere_start_vals(subset, t_0_range, t_m_range, b_0_range, n_tests)
-  
-  if (all(is.na(briere_start_vals))) {
-    no_fit_briere <- c(no_fit_briere, unique(subset$ID))
-    briere_AIC <- NA
-    briere_AICc <- NA
-    briere_BIC <- NA
-    briere_points <- rep(NA, length(temp_points))
+  # if no starting values gave fits, set AIC, BIC, AICc and predicted values to NA
+  if (all(is.na(briere1_start_vals))) {
+    briere1_AIC <- NA
+    briere1_AICc <- NA
+    briere1_BIC <- NA
+    briere1_points <- rep(NA, length(temp_points))
   }
+  
+  # else set parameters at optimal starting values and produce fit
   else {
+    t_0_start <- briere1_start_vals[[2]]
+    t_m_start <- briere1_start_vals[[3]]
+    b_0_start <- briere1_start_vals[[4]]
     
-    #print(paste("ID:", count, "lowest AIC:", briere_start_vals[[1]]))
-    
-    t_0_start <- briere_start_vals[[2]]
-    t_m_start <- briere_start_vals[[3]]
-    b_0_start <- briere_start_vals[[4]]
-    
-    fit_briere <- nlsLM(OriginalTraitValue ~ briere(t = ConTemp, t_0, t_m, b_0),
+    # fit optimal model
+    fit_briere1 <- nlsLM(OriginalTraitValue ~ briere1(t = ConTemp, t_0, t_m, b_0),
                         data = subset,
                         start = list(t_0 = t_0_start,
                                      t_m = t_m_start,
                                      b_0 = b_0_start),
-                        control = list(maxiter = 500)#,
-                        #lower = c(-20, 0, 1e-7),
-                        #upper = c(20, 100 , 1e+7)
-                        )
+                        control = list(maxiter = 500))
     
-    briere_AIC <- AIC(fit_briere)
-    briere_AICc <- AICc(fit_briere, num_param_briere, nrow(subset))
-    briere_BIC <- BIC(fit_briere)
+    # generate AIC, BIC, AICc and predicted fit values
+    briere1_AIC <- AIC(fit_briere1)
+    briere1_AICc <- AICc(fit_briere1, num_param_briere1, nrow(subset))
+    briere1_BIC <- BIC(fit_briere1)
     
-    briere_points <- 
-      briere(t = temp_points, 
-           t_0 = coef(fit_briere)["t_0"],
-           t_m = coef(fit_briere)["t_m"],
-           b_0 = coef(fit_briere)["b_0"])
+    briere1_points <- 
+      briere1(t = temp_points, 
+           t_0 = coef(fit_briere1)["t_0"],
+           t_m = coef(fit_briere1)["t_m"],
+           b_0 = coef(fit_briere1)["b_0"])
   }
   
   
-  # BRIERE 2
+  ### --- FIT BRIERE-2 MODEL --- ###
+  
+  # use same estimates for T0, Tm and B0 as Briere-1
+  
+  ## -- Estimate M and create ranges for sampling -- ##
   m_est <- 2
   m_scale <- 2
   m_range <- runif(n_tests, m_est^(-m_scale), m_est^(m_scale))
   
+  ## -- Sample parameters and produce fit -- ##
   briere2_start_vals <- get_briere2_start_vals(subset, t_0_range, t_m_range, b_0_range, m_range, n_tests)
   
   if (all(is.na(briere2_start_vals))) {
-    #UPDATE NO FIT TO INCLUDE MORE MODELS
-    no_fit_briere2 <- c(no_fit_briere2, unique(subset$ID))
     briere2_AIC <- NA
     briere2_AICc <- NA
     briere2_BIC <- NA
     briere2_points <- rep(NA, length(temp_points))
   }
   else {
-    
-    #print(paste("ID:", count, "lowest briere2 AIC:", briere2_start_vals[[1]]))
-    
     t_0_start <- briere2_start_vals[[2]]
     t_m_start <- briere2_start_vals[[3]]
     b_0_start <- briere2_start_vals[[4]]
@@ -413,37 +365,36 @@ for (count in 1:max(therm$ID)) {
              )
   }
 
-  ### YAN AND HUNT
+  ### --- FIT YAN AND HUNT MODEL --- ###
   
+  ## -- Estimate R_max and create range for sampling -- ##
   r_max_est <- max(subset$OriginalTraitValue)
   yan_hunt_scale <- 2
 
   # this range skews estimates to being larger than r_max (note / vs * for lower vs upper limit)
   r_max_range <- runif(n_tests, r_max_est - (abs(r_max_est)/yan_hunt_scale), r_max_est + (abs(r_max_est)*yan_hunt_scale))
 
+  ## -- Estimate T_min, T_max and T_opt and create ranges for sampling -- ##
   t_min_est <- min(subset$ConTemp)
   t_min_range <- runif(n_tests, t_min_est - (abs(t_min_est)/yan_hunt_scale), t_min_est + (abs(t_min_est)/yan_hunt_scale))
 
   t_max_est <- max(subset$ConTemp)
   t_max_range <- runif(n_tests, t_max_est - (abs(t_max_est)/yan_hunt_scale), t_max_est + (abs(t_max_est)/yan_hunt_scale))
 
-  t_opt_est <- subset[which.max(subset$OriginalTraitValue), "ConTemp"]
+  t_opt_est <- subset[which.max(subset$OriginalTraitValue), "ConTemp"] # temperature at which rate was highest
   t_opt_range <- runif(n_tests, t_opt_est - (abs(t_opt_est)/yan_hunt_scale), t_opt_est + (abs(t_opt_est)/yan_hunt_scale))
 
+  ## -- Sample parameters and produce fit -- ##
+  
   yan_hunt_start_vals <- get_yan_hunt_start_vals(subset, r_max_range, t_min_range, t_max_range, t_opt_range, n_tests)
 
   if (all(is.na(yan_hunt_start_vals))) {
-    #UPDATE NO FIT TO INCLUDE MORE MODELS
-    no_fit_yan_hunt <- c(no_fit_yan_hunt, unique(subset$ID))
     yan_hunt_AIC <- NA
     yan_hunt_AICc <- NA
     yan_hunt_BIC <- NA
     yan_hunt_points <- rep(NA, length(temp_points))
   }
   else {
-
-    #print(paste("ID:", count, "lowest briere2 AIC:", briere2_start_vals[[1]]))
-
     r_max_start <- yan_hunt_start_vals[[2]]
     t_min_start <- yan_hunt_start_vals[[3]]
     t_max_start <- yan_hunt_start_vals[[4]]
@@ -470,7 +421,8 @@ for (count in 1:max(therm$ID)) {
       )
   }
   
-  # Determine whether data is from respiration or photosynthesis
+  ### --- DETERMINE WHETHER THIS DATASET IS RESPIRATION OR PHOTOSYNTHESIS (RESPONSE GROUP)--- ###
+  
   if (is.na(unique(subset$StandardisedTraitName))) {
     response_group <- "NA"
   }
@@ -481,31 +433,42 @@ for (count in 1:max(therm$ID)) {
     response_group <- "Photosynthesis"
   }
   
-  # fill statsDF for the subset
+  ### --- FILL STATISTICS DATAFRAME (statsDF) FOR THE DATASET --- ###
+  # columns: ID, Model, AIC, AICc, BIC, Response name, Response type (Resp or Photo), Curve classification
+  
   statsDF[count*num_models,] <- c(count, "Quadratic", AIC(fit_quad), AICc(fit_quad, num_param_quad, nrow(subset)), BIC(fit_quad), unique(subset$StandardisedTraitName), response_group, unique(subset$CurveClassification))
   statsDF[count*num_models - 1,] <- c(count, "Cubic", AIC(fit_cubic), AICc(fit_cubic, num_param_cubic, nrow(subset)), BIC(fit_cubic), unique(subset$StandardisedTraitName), response_group, unique(subset$CurveClassification))
-  statsDF[count*num_models - 2,] <- c(count, "Briere", briere_AIC, briere_AICc, briere_BIC, unique(subset$StandardisedTraitName), response_group, unique(subset$CurveClassification))
-  statsDF[count*num_models - 3,] <- c(count, "Briere2", briere2_AIC, briere2_AICc, briere2_BIC, unique(subset$StandardisedTraitName), response_group, unique(subset$CurveClassification))
+  statsDF[count*num_models - 2,] <- c(count, "Briere-1", briere1_AIC, briere1_AICc, briere1_BIC, unique(subset$StandardisedTraitName), response_group, unique(subset$CurveClassification))
+  statsDF[count*num_models - 3,] <- c(count, "Briere-2", briere2_AIC, briere2_AICc, briere2_BIC, unique(subset$StandardisedTraitName), response_group, unique(subset$CurveClassification))
   statsDF[count*num_models - 4,] <- c(count, "Yan and Hunt", yan_hunt_AIC, yan_hunt_AICc, yan_hunt_BIC, unique(subset$StandardisedTraitName), response_group, unique(subset$CurveClassification))
   
-  # fill in model_fitsDF for the subset
+  
+  ### --- FILL MODEL FIT POINTS DATAFRAME (model_fitsDF) FOR THE DATASET --- ###
+  # columns: ID, Temperature points, Trait points, Model
+  
   model_fitsDF[(count*rows_per_subset-(rows_per_subset-1)):(count*rows_per_subset),] <- 
     c(
       rep(count, rows_per_subset), # ID
       rep(temp_points, num_models), # Temperatures
-      c(quad_points, cubic_points, briere_points, briere2_points, yan_hunt_points), # Trait points
+      c(quad_points, cubic_points, briere1_points, briere2_points, yan_hunt_points), # Trait points
       c(rep("Quadratic", temp_points_out), 
         rep("Cubic", temp_points_out), 
-        rep("Briere", temp_points_out), 
-        rep("Briere2", temp_points_out),
+        rep("Briere-1", temp_points_out), 
+        rep("Briere-2", temp_points_out),
         rep("Yan and Hunt", temp_points_out)) # Model
       )
   
-  # print counter to keep track of progress
-  print(count)
+  # increment progress bar to keep track of progress
+  fraction_done <- count / max(therm$ID)
+  setTxtProgressBar(progress_bar, fraction_done)
+  
 }
 
+# close progress bar
+close(progress_bar)
+
+
+### --- WRITE COMPLETED MODEL FITS AND STATISTICS DATAFRAMES TO CSV FILES --- ###
 
 write.csv(statsDF, "../Data/StatsDF.csv")
 write.csv(model_fitsDF, "../Data/Model_fitsDF.csv")
-# write.csv(no_fit, "../Data/No_fit.csv")

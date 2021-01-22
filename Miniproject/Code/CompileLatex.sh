@@ -22,24 +22,34 @@ then
   rm $(basename "$1" .tex).pdf #use of basename to get file without .tex extension
 fi
 
+#Calculate word count and pipe to file (that .tex uses)
+texcount -template={1} $1 > $(basename "$1" .tex).sum
+
 #Compile pdf multiple times, and bibtex
-pdflatex -halt-on-error -output-directory . -synctex=1 $1
-pdflatex -halt-on-error -output-directory . -synctex=1 $1
+echo "---- COMPILING LATEX ----"
+pdflatex -halt-on-error -interaction=batchmode -output-directory . -synctex=1 $1
+pdflatex -halt-on-error -interaction=batchmode -output-directory . -synctex=1 $1
+
+echo "---- COMPILING BIBTEX ----"
 bibtex $(basename "$1" .tex)
-pdflatex -halt-on-error -output-directory . -synctex=1 $1
-pdflatex -halt-on-error -output-directory . -synctex=1 $1
+
+echo "---- COMPILING LATEX ----"
+pdflatex -halt-on-error -interaction=batchmode -output-directory . -synctex=1 $1
+pdflatex -halt-on-error -interaction=batchmode -output-directory . -synctex=1 $1
+echo "---- COMPILE COMPLETE ----"
 
 #Open pdf if file exists and isn't empty
 if [ -s $(basename "$1" .tex).pdf ];
 then
+  echo " ---- OPENING COMPILED PDF ----"
   evince $(basename "$1" .tex).pdf & #opens the pdf
 else
-  echo "Pdf is empty";
+  echo "ERROR: Pdf is empty";
 fi
 
 ## Cleanup (-f: don't ask confirmation)
 rm -f {*~,*.aux,*.blg,*.bcf,*.nav,*.vrb,*.bbl,*.lot,*.dvi,*.log,\
-*.lof,*.nav,*.out,*.snm,*.toc,*.fdb,*.fls,*.synctex.*,*.cut} #no spaces is important
+*.lof,*.nav,*.out,*.snm,*.toc,*.fdb,*.fls,*.synctex.*,*.cut,*.bak,*.fdb_latexmk} #no spaces is important
 
 #Move pdf to Results directory
 #mv $(basename "$1" .tex).pdf ../Results/
